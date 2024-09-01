@@ -29,14 +29,14 @@ const clientSchema = new mongoose.Schema({
         required: true
     },
 
-    name_gurantee1: {
+    name_guarantee1: {
         type: String,
         required: false
     },
 
-    name_gurantee2: {
+    name_guarantee2: {
         type: String,
-        required: flase
+        required: false
     },
 
     id_guarantee1: {
@@ -47,9 +47,12 @@ const clientSchema = new mongoose.Schema({
     id_guarantee2: {
         type: String,
         required: false
-    }
+    },
+},
 
-})
+{timestamps:true}
+
+)
 
 const Client = mongoose.model("Client", clientSchema);
 export default Client;
