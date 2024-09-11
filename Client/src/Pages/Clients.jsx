@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Loans from "./Loans";
+import useClientStore from "../Store/ClientStore";
+
+
 
 const Clients = () => {
   const [clients, setClients] = useState([]);
@@ -8,6 +13,8 @@ const Clients = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
+  const Navigate = useNavigate();
+
   const url = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
@@ -60,7 +67,11 @@ const Clients = () => {
   };
 
   const handleShowLoans = (client) => {
-    console.log("Show loans for:", client);
+    setSelectedClient(client);
+  
+    Navigate(`/loans/${client._id}`);
+   
+  
   };
 
   const handleSubmit = async (e) => {
@@ -173,6 +184,7 @@ const Clients = () => {
         </tbody>
       </table>
 
+      
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
