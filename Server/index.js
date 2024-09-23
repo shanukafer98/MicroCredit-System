@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 import clientRouter from "./routes/client.route.js";
 import authRouter from "./routes/auth.route.js";
+import loanRouter from "./routes/loan.route.js";
 
 const app = express();
 
@@ -18,10 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 mongoose
     .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000, // 5 seconds
-        connectTimeoutMS: 10000, // 10 seconds
+
     })
     .then(() => {
         app.listen(PORT, () => {
@@ -41,4 +39,5 @@ app.get("/", (req, res) => {
 // Use routers for API routes
 app.use("/api/client", clientRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/loans", loanRouter);
 

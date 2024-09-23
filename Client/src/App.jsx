@@ -4,7 +4,10 @@ import  Clients  from "./Pages/Clients";
 import { Signup } from "./Pages/Signup";
 import { Signin } from "./Pages/Signin";
 import { Toaster } from "react-hot-toast";
-import Loans from "./Pages/Loans";
+import PaymentPage from "./Pages/PaymentPage";
+import LoanPage from "./Pages/LoanPage";
+
+
 
 function App() {
 
@@ -13,11 +16,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route>
-             <Route  path = "/c" element = {<Signin/>}/>
+             <Route  path = "/" element = {<Signin/>}/>
              <Route  path = "/signup" element = {<Signup/>}/>
+           
 
-             <Route path = "/" element = {<Clients/>}/>
-             <Route path = "/loans/:clientId" element = {<Loans/>}/>
+             <Route path = "/clients" element = {<Clients/>}/>
+             <Route path = "/loans" element = {<LoanPage/>}/>
+             <Route path="/payments" component = {<PaymentPage/>} />
           </Route>
         </Routes>
         <Toaster position="top-center" reverseOrder={true} />

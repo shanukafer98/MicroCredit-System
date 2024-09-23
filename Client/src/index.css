@@ -10,3 +10,16 @@
    
 
 }
+
+/* Custom styles */
+.input {
+    @apply border border-gray-300 p-2 rounded w-full;
+  }
+  
+  .btn {
+    @apply bg-blue-500 text-white p-2 rounded hover:bg-blue-700;
+  }
+  
+  .loan-card, .payment-card {
+    @apply border border-gray-300 p-4 rounded mb-4;
+  }

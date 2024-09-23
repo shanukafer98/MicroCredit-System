@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Loans from "./Loans";
+
 import useClientStore from "../Store/ClientStore";
 
 
@@ -14,6 +14,7 @@ const Clients = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const Navigate = useNavigate();
+  const Client = useClientStore((state) => state.setClientID);
 
   const url = import.meta.env.VITE_BACKEND_URL;
 
@@ -68,8 +69,9 @@ const Clients = () => {
 
   const handleShowLoans = (client) => {
     setSelectedClient(client);
+    Client(client._id);
   
-    Navigate(`/loans/${client._id}`);
+    Navigate(`/loans`);
    
   
   };
