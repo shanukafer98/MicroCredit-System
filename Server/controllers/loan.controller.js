@@ -1,6 +1,7 @@
 import LoanType1 from '../models/loan_type1.model.js';
 import LoanType2 from '../models/loan_type2.model.js';
 import Payment from '../models/payment.model.js';
+import mongoose from 'mongoose';
 
 export const createLoan = async (req, res) => {
     try {
@@ -13,6 +14,7 @@ export const createLoan = async (req, res) => {
             loan.totalDue = loan.monthlyInterest;
         } else if (loanType === 'type2') {
             loan = new LoanType2(loanData);
+            loan.monthlyInstallment = (loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100)) / loan.loanDuration;
             loan.totalDue = loan.monthlyInstallment;
         }
 
@@ -25,10 +27,18 @@ export const createLoan = async (req, res) => {
 
 export const getAllLoans = async (req, res) => {
     try {
-        // Fetch LoanType1 and LoanType2 concurrently
+        const {clientID} = req.params;
+
+        // Validate and convert clientID to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(clientID)) {
+            return res.status(400).json({ message: 'Invalid clientID' });
+        }
+
+        const loanID = new  mongoose.Types.ObjectId(clientID);
+
         const [loansType1, loansType2] = await Promise.all([
-            LoanType1.find(),
-            LoanType2.find()
+            LoanType1.find({ loanID }).populate('loanID'),
+            LoanType2.find({ loanID }).populate('loanID')
         ]);
 
         // Combine both loan types into a single array
@@ -39,6 +49,28 @@ export const getAllLoans = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// export const deleteLoan = async (req,res) => {
+//   try{
+
+//     const {loanid} = req,params
+//     if(!mongoose.Types.ObjectId.isValid(id)){
+
+//   }catch(err){
+//         res.status(500).json({message: err.message})
+
+
+//   }
+
+
+
+
+// }
+
+
+
+
+
 
 export const makePayment = async (req, res) => {
     try {

@@ -30,6 +30,11 @@ const loanType1Schema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    latefeeInterest:{
+        type:Number,
+        default:0
+    },
+    
     lateFee: {
         type: Number,
         default: 0

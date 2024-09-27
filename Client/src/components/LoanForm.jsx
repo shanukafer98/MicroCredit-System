@@ -1,31 +1,89 @@
-import React, { useState } from 'react';
-import useLoanStore from '../Store/loanStore';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import useLoanStore from "../Store/loanStore";
+import toast from "react-hot-toast";
 
-const LoanForm = (ClientID) => {
-  const [loan, setLoan] = useState({clientid: '', loanType: 'type1', interestRate: '', principalAmount: '', monthlyInterest: '', latefeeInterest: '' });
+const LoanForm = () => {
+  const [loan, setLoan] = useState({
+    loanID: localStorage.getItem("clientID") || "",
+    loanType: "type1",
+    interestRate: "",
+    principalAmount: "",
+    latefeeInterest: "",
+    loanDuration: "",
+  });
   const createLoan = useLoanStore((state) => state.createLoan);
-  
 
   const handleChange = (e) => {
     setLoan({ ...loan, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    if (loan.loanType === "type1") {
+    }
+  }, [FormData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createLoan(loan);
-    toast.success('Loan created successfully!');
+    try {
+      await createLoan(loan);
+      toast.success("Loan created successfully!");
+    } catch (error) {
+      toast.error("Failed to create loan.");
+      console.error(error); // Log the error for debugging
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input name='clientid' value={localStorage.getItem('clientID')} onChange={handleChange} placeholder="Client ID" className="input" />
-      <input name="loanType" value={loan.loanType} onChange={handleChange} placeholder="Loan Type" className="input" />
-      <input name="interestRate" value={loan.interestRate} onChange={handleChange} placeholder="Interest Rate" className="input" />
-      <input name="principalAmount" value={loan.principalAmount} onChange={handleChange} placeholder="Principal Amount" className="input" />
-      <input name="monthlyInterest" value={loan.monthlyInterest} onChange={handleChange} placeholder="Monthly Interest" className="input" />
-      <input name="latefeeInterest" value={loan.latefeeInterest} onChange={handleChange} placeholder="Late Fee Interest" className="input" />
-      <button type="submit" className="btn">Create Loan</button>
+      <input
+        name="loanID"
+        value={loan.loanID} // Use state value to control the loanID
+        onChange={handleChange}
+        placeholder="Client ID"
+        className="input"
+        disabled
+      />
+      <input
+        name="loanType"
+        value={loan.loanType}
+        onChange={handleChange}
+        placeholder="Loan Type"
+        className="input"
+      />
+      <input
+        name="interestRate"
+        value={loan.interestRate}
+        onChange={handleChange}
+        placeholder="Interest Rate"
+        className="input"
+      />
+      <input
+        name="principalAmount"
+        value={loan.principalAmount}
+        onChange={handleChange}
+        placeholder="Principal Amount"
+        className="input"
+      />
+      {loan.loanType === "type2" && (
+        <input
+          name="loanDuration"
+          value={loan.loanDuration}
+          onChange={handleChange}
+          placeholder="Loan Duration (in months)"
+          className="input"
+        />
+      )}
+
+      <input
+        name="latefeeInterest"
+        value={loan.latefeeInterest}
+        onChange={handleChange}
+        placeholder="Late Fee Interest"
+        className="input"
+      />
+      <button type="submit" className="btn">
+        Create Loan
+      </button>
     </form>
   );
 };
