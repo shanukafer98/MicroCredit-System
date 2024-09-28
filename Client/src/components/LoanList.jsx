@@ -1,13 +1,32 @@
 import React, { useEffect } from "react";
 import useLoanStore from "../Store/loanStore";
+import toast from "react-hot-toast";
 
 const LoanList = () => {
   const { loans, fetchLoans } = useLoanStore();
   const clientID = localStorage.getItem("clientID");
+  const deleteLoan = useLoanStore((state) => state.deleteLoan)
 
   useEffect(() => {
     fetchLoans(clientID);
   }, [fetchLoans]);
+
+  const handleDelete = async (loanID) => {
+ 
+    try{
+      await deleteLoan(loanID)
+      toast.success("Succesfully delete the loan")
+
+    }catch(err){
+      toast.error("Cant delete the specific loan")
+      console.log(err)
+
+    }
+  
+  }
+
+
+
 
   return (
     <div>
@@ -29,7 +48,7 @@ const LoanList = () => {
             </p>
 
             <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" >Delete Loan </button>
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleDelete(loan._id)}>Delete Loan </button>
           </div>
        
       ))}

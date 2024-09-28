@@ -20,7 +20,7 @@ const useLoanStore = create((set) => ({
 
   deleteLoan: async (loanID) => {
     const response = await axios.delete(`${url}/api/loans/${loanID}`);
-    const data = response.data;
+   
   }
 }));
 
