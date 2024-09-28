@@ -16,11 +16,9 @@ const LoanList = () => {
     try{
       await deleteLoan(loanID)
       toast.success("Succesfully delete the loan")
-
     }catch(err){
       toast.error("Cant delete the specific loan")
       console.log(err)
-
     }
   
   }
