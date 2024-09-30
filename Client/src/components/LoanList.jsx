@@ -34,12 +34,14 @@ const LoanList = () => {
             <p>Monthly Interest Rate: {loan.interestRate}%</p>
             <p>Late Fee Interest Rate: {loan.latefeeInterest}%</p>
             {loan.monthlyInterest && (
-              <p>Monthly Interest: {loan.monthlyInterest}</p>
+              <p>Monthly Interest: {loan.monthlyInterest.toFixed(2)}</p>
             )}
             {loan.loanDuration && (
               <p>Loan Duration: {loan.loanDuration} months</p>
             )}
-            <p>Total Due: Rs.{loan.totalDue}</p>
+            {loan.monthlyInstallment && <p>Monthly Installment: Rs.{loan.monthlyInstallment.toFixed(2)}</p>}
+            {loan.unpaidInterest && <p></p>}
+            <p>Total Due: Rs.{loan.totalDue.toFixed(2)}</p>
             <p>Status: {loan.status}</p>
             <p>
               Loan Issued Date & Time:{" "}
