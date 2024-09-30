@@ -9,6 +9,12 @@ const loanType2Schema = new mongoose.Schema({
 
         
     },
+    
+    loanType: {
+        type: String,
+        required: true,
+        default: 'Type2'
+    },
 
     interestRate: {
         type: Number,
@@ -26,6 +32,11 @@ const loanType2Schema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    latefeeInterest:{
+        type:Number,
+        default:0
+    },
+    
     status: {
         type: String,
         enum: ['active', 'completed', 'delay'],

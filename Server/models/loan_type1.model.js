@@ -9,6 +9,12 @@ const loanType1Schema = new mongoose.Schema({
         
     },
 
+    loanType: {
+        type: String,
+        required: true,
+        default: 'Type1'
+    },
+
     interestRate: {
         type: Number,
         required: true

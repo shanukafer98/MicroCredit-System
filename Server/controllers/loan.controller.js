@@ -50,23 +50,30 @@ export const getAllLoans = async (req, res) => {
     }
 };
 
-// export const deleteLoan = async (req,res) => {
-//   try{
+export const deleteLoan =  async (req, res) => {
 
-//     const {loanid} = req,params
-//     if(!mongoose.Types.ObjectId.isValid(id)){
-
-//   }catch(err){
-//         res.status(500).json({message: err.message})
-
-
-//   }
-
-
-
-
-// }
-
+    const { loanType, id } = req.query;
+    let loanModel;
+  
+    // Choose the right loan model based on loanType
+    if (loanType === 'Type1') {
+      loanModel = LoanType1;
+    } else if (loanType === 'Type2') {
+      loanModel = LoanType2;
+    } else {
+      return res.status(400).json({ message: 'Invalid loan type' });
+    }
+  
+    try {
+      const deletedLoan = await loanModel.findByIdAndDelete(id);
+      if (!deletedLoan) {
+        return res.status(404).json({ message: 'Loan not found' });
+      }
+      res.status(200).json({ message: 'Loan deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting loan', error });
+    }
+  }
 
 
 
