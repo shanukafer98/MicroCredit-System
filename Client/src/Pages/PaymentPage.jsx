@@ -1,41 +1,17 @@
-import React, { useState } from 'react';
-import usePaymentStore from '../Store/paymentStore';
-import toast from 'react-hot-toast';
+import React from 'react';
+import PaymentForm from '../components/PaymentForm';
+import PaymentHistory from '../components/PaymentHistory';
+import { useParams } from 'react-router-dom';
 
 const PaymentPage = () => {
-  const [payment, setPayment] = useState({ loanId: '', amountPaid: '' });
-  const makePayment = usePaymentStore((state) => state.makePayment);
-
-  const handleChange = (e) => {
-    setPayment({ ...payment, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await makePayment(payment);
-    toast.success('Payment made successfully!');
-  };
-
+ 
+   const { loanId } = useParams()
+   
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Make a Payment</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="loanId"
-          value={payment.loanId}
-          onChange={handleChange}
-          placeholder="Loan ID"
-          className="input"
-        />
-        <input
-          name="amountPaid"
-          value={payment.amountPaid}
-          onChange={handleChange}
-          placeholder="Amount Paid"
-          className="input"
-        />
-        <button type="submit" className="btn">Make Payment</button>
-      </form>
+      <h1 className="text-2xl font-bold mb-4">Loan Details</h1>
+    
+      <PaymentHistory loanId={loanId}  />
     </div>
   );
 };

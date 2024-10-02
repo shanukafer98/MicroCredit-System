@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import usePaymentStore from '../Store/paymentStore';
 import toast from 'react-hot-toast';
 
-const PaymentForm = ({ loanId }) => {
-  const [payment, setPayment] = useState({ loanId, amountPaid: '' });
+const PaymentForm = ({ loanId, loanType }) => {
+  const [payment, setPayment] = useState({ loanId, amountPaid: '', paymentDate: '', loanType });
   const makePayment = usePaymentStore((state) => state.makePayment);
 
   const handleChange = (e) => {
@@ -12,14 +12,36 @@ const PaymentForm = ({ loanId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await makePayment(payment);
-    toast.success('Payment made successfully!');
+    try {
+      await makePayment(payment);
+      console.log(payment);
+      toast.success('Payment made successfully!');
+    } catch (error) {
+      toast.error('Failed to make payment');
+      console.error(error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input name="amountPaid" value={payment.amountPaid} onChange={handleChange} placeholder="Amount Paid" className="input" />
-      <button type="submit" className="btn">Make Payment</button>
+      <input
+        name="amountPaid"
+        value={payment.amountPaid}
+        onChange={handleChange}
+        placeholder="Amount Paid"
+        className="input"
+      />
+      <input
+        type="date"
+        name="paymentDate"
+        value={payment.paymentDate}
+        onChange={handleChange}
+        placeholder="Payment Date"
+        className="input"
+      />
+      <button type="submit" className="btn">
+        Make Payment
+      </button>
     </form>
   );
 };

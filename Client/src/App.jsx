@@ -22,7 +22,7 @@ function App() {
 
              <Route path = "/clients" element = {<Clients/>}/>
              <Route path = "/loans" element = {<LoanPage/>}/>
-             <Route path="/payments" component = {<PaymentPage/>} />
+             <Route path="/payments/:loanId" component = {<PaymentPage />} />
           </Route>
         </Routes>
         <Toaster position="top-center" reverseOrder={true} />

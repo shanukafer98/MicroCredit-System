@@ -9,7 +9,7 @@ const paymentSchema = new mongoose.Schema({
     loanType: {
         type: String,
         required: true,
-        enum: ['LoanType1', 'LoanType2']  
+        enum: ['Type1', 'Type2']  
     },
     amountPaid: {
         type: Number,
