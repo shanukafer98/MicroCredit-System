@@ -3,16 +3,15 @@ import LoanType1 from '../models/loan_type1.model.js';
 import LoanType2 from '../models/loan_type2.model.js';
 
 
-export const  getAllPayments = async (req, res) => {
+export const getAllPayments = async (req, res) => {
     try {
         const { loanId } = req.params;
-        const payments = await Payment.findById(loanId);
+        const payments = await Payment.find({ loanId });
         res.status(200).json(payments);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
-
+};
 
 
 export const makePayment = async (req, res) => {
