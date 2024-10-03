@@ -26,7 +26,7 @@ const LoanList = () => {
 
   useEffect(() => {
     fetchLoans(clientID);
-  }, [fetchLoans]);
+  });
 
   const openModal = (loan) => {
     setSelectedLoan(loan);
@@ -68,8 +68,8 @@ const LoanList = () => {
             <p>Principal Amount: Rs.{loan.principalAmount}</p>
             <p>Monthly Interest Rate: {loan.interestRate}%</p>
             <p>Late Fee Interest Rate: {loan.latefeeInterest}%</p>
-            {loan.monthlyInterest && (
-              <p>Monthly Interest: {loan.monthlyInterest.toFixed(2)}</p>
+            {loan.monthlyInterest !== null && loan.monthlyInterest !== undefined    && (
+              <p>Monthly Interest: Rs. {loan.monthlyInterest.toFixed(2)}</p>
             )}
             {loan.loanDuration && (
               <p>Loan Duration: {loan.loanDuration} months</p>
@@ -79,10 +79,11 @@ const LoanList = () => {
                 Monthly Installment: Rs.{loan.monthlyInstallment.toFixed(2)}
               </p>
             )}
-            {loan.unpaidInterest && (
+
+            {loan.unpaidInterest !== null && loan.unpaidInterest !== undefined  && (
               <p>Unpaid Interest: Rs.{loan.unpaidInterest.toFixed(2)}</p>
             )}
-            {loan.unpaidInstallment && (
+            {loan.unpaidInstallment !== null && loan.unpaidInstallment !== undefined && (
               <p>Unpaid Installment: Rs.{loan.unpaidInstallment.toFixed(2)}</p>
             )}
             <p>Late Fee: Rs.{loan.lateFee.toFixed(2)}</p>
@@ -128,7 +129,7 @@ const LoanList = () => {
           onRequestClose={closeModal}
           style={customStyles}
         >
-          <PaymentForm loanId={selectedLoan._id} loanType={selectedLoan.loanType} />
+          <PaymentForm loanId={selectedLoan._id} loanType={selectedLoan.loanType}  onPaymentSuccess={closeModal}/>
         </Modal>
       )}
     </div>

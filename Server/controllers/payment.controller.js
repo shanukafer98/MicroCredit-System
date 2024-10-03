@@ -128,3 +128,111 @@ export const makePayment = async (req, res) => {
     }
 };
 
+
+export const deletePayment = async (req, res) => {
+    try {
+        const { paymentId } = req.params;
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        const { loanId, amountPaid, loanType } = payment;
+        let loan;
+
+        // Dynamically load the loan based on loanType
+        if (loanType === 'Type1') {
+            loan = await LoanType1.findById(loanId);
+        } else if (loanType === 'Type2') {
+            loan = await LoanType2.findById(loanId);
+        }
+
+        if (!loan) {
+            return res.status(404).json({ message: 'Loan not found' });
+        }
+
+        let remainingRefund = amountPaid;
+
+        // Handle refunds and interest/fees calculations for loanType1
+        if (loanType === 'Type1') {
+            // Refund current month's interest
+            if (loan.monthlyInterest < loan.originalMonthlyInterest) {
+                const refundAmount = loan.originalMonthlyInterest - loan.monthlyInterest;
+                if (remainingRefund >= refundAmount) {
+                    remainingRefund -= refundAmount;
+                    loan.monthlyInterest = loan.originalMonthlyInterest;
+                } else {
+                    loan.monthlyInterest += remainingRefund;
+                    remainingRefund = 0;
+                }
+            }
+
+            // Refund late fees
+            if (loan.lateFee < loan.originalLateFee) {
+                const refundAmount = loan.originalLateFee - loan.lateFee;
+                if (remainingRefund >= refundAmount) {
+                    remainingRefund -= refundAmount;
+                    loan.lateFee = loan.originalLateFee;
+                } else {
+                    loan.lateFee += remainingRefund;
+                    remainingRefund = 0;
+                }
+            }
+
+            // Refund unpaid interest
+            if (remainingRefund > 0) {
+                loan.unpaidInterest += remainingRefund;
+            }
+
+            // Calculate new late fee and total due
+            loan.lateFee = loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
+            loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
+
+        // Handle refunds and fees calculations for loanType2
+        } else if (loanType === 'Type2') {
+            // Refund current month's installment
+            if (loan.monthlyInstallment < loan.originalMonthlyInstallment) {
+                const refundAmount = loan.originalMonthlyInstallment - loan.monthlyInstallment;
+                if (remainingRefund >= refundAmount) {
+                    remainingRefund -= refundAmount;
+                    loan.monthlyInstallment = loan.originalMonthlyInstallment;
+                } else {
+                    loan.monthlyInstallment += remainingRefund;
+                    remainingRefund = 0;
+                }
+            }
+
+            // Refund late fees
+            if (loan.lateFee < loan.originalLateFee) {
+                const refundAmount = loan.originalLateFee - loan.lateFee;
+                if (remainingRefund >= refundAmount) {
+                    remainingRefund -= refundAmount;
+                    loan.lateFee = loan.originalLateFee;
+                } else {
+                    loan.lateFee += remainingRefund;
+                    remainingRefund = 0;
+                }
+            }
+
+            // Refund unpaid installment
+            if (remainingRefund > 0) {
+                loan.unpaidInstallment += remainingRefund;
+            }
+
+            // Calculate new late fee and total due
+            loan.lateFee = loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
+            loan.totalDue = loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
+        }
+
+        // Save the loan after updates
+        await loan.save();
+
+        // Delete the payment
+        await Payment.findByIdAndDelete(paymentId);
+
+        res.status(200).json({ message: 'Payment deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

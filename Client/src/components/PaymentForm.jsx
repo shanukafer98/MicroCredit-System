@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import usePaymentStore from '../Store/paymentStore';
 import toast from 'react-hot-toast';
 
-const PaymentForm = ({ loanId, loanType }) => {
+const PaymentForm = ({ loanId, loanType, onPaymentSuccess }) => {
   const [payment, setPayment] = useState({ loanId, amountPaid: '', paymentDate: '', loanType });
   const makePayment = usePaymentStore((state) => state.makePayment);
 
@@ -12,13 +12,21 @@ const PaymentForm = ({ loanId, loanType }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate amountPaid
+    if (isNaN(payment.amountPaid) || payment.amountPaid <= 0) {
+      toast.error('Please enter a valid amount.');
+      return;
+    }
+
     try {
       await makePayment(payment);
       console.log(payment);
       toast.success('Payment made successfully!');
-    } catch (error) {
+      onPaymentSuccess();
+    } catch (err) {
       toast.error('Failed to make payment');
-      console.error(error);
+      console.error(err);
     }
   };
 

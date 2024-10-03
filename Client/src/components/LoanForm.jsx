@@ -54,7 +54,7 @@ const LoanForm = () => {
         name="interestRate"
         value={loan.interestRate}
         onChange={handleChange}
-        placeholder="Interest Rate"
+        placeholder="Monthly Interest Rate"
         className="input"
       />
       <input
