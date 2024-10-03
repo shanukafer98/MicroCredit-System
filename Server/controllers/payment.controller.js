@@ -16,7 +16,7 @@ export const getAllPayments = async (req, res) => {
 
 export const makePayment = async (req, res) => {
     try {
-        const { loanId, amountPaid, loanType,paymentDate } = req.body;
+        const { loanId, amountPaid, loanType, paymentDate } = req.body;
         let loan;
 
         // Dynamically load the loan based on loanType
@@ -30,20 +30,20 @@ export const makePayment = async (req, res) => {
             return res.status(404).json({ message: 'Loan not found' });
         }
 
-        // Create payment, including the loan type
+        // Create payment record
         const payment = new Payment({
             loanId,
             amountPaid,
-            loanType, 
+            loanType,
             paymentDate
         });
         await payment.save();
 
         let remainingPayment = amountPaid;
 
-        // Handle payments and interest/fees calculations for loanType1
+        // Handle payments for Loan Type 1
         if (loanType === 'Type1') {
-            // Pay off unpaid interest first
+            // Pay off unpaid interest
             if (loan.unpaidInterest > 0) {
                 if (remainingPayment >= loan.unpaidInterest) {
                     remainingPayment -= loan.unpaidInterest;
@@ -76,13 +76,19 @@ export const makePayment = async (req, res) => {
                 }
             }
 
-            // Calculate new late fee and total due
+            // Apply excess payment to principal
+            if (remainingPayment > 0) {
+                loan.principalAmount -= remainingPayment;
+                remainingPayment = 0;
+            }
+
+            // Calculate new late fee based on unpaid interest
             loan.lateFee = loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
             loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
 
-        // Handle payments and fees calculations for loanType2
+        // Handle payments for Loan Type 2
         } else if (loanType === 'Type2') {
-            // Pay off unpaid installment first
+            // Pay off unpaid installment
             if (loan.unpaidInstallment > 0) {
                 if (remainingPayment >= loan.unpaidInstallment) {
                     remainingPayment -= loan.unpaidInstallment;
@@ -109,13 +115,16 @@ export const makePayment = async (req, res) => {
                 if (remainingPayment >= loan.monthlyInstallment) {
                     remainingPayment -= loan.monthlyInstallment;
                     loan.monthlyInstallment = 0;
+
+                    // Reduce the principal once full installment is paid
+                    loan.principalAmount -= loan.monthlyInstallment;
                 } else {
                     loan.monthlyInstallment -= remainingPayment;
                     remainingPayment = 0;
                 }
             }
 
-            // Calculate new late fee and total due
+            // Calculate new late fee based on unpaid installment
             loan.lateFee = loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
             loan.totalDue = loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
         }
@@ -127,7 +136,6 @@ export const makePayment = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 
 export const deletePayment = async (req, res) => {
     try {
