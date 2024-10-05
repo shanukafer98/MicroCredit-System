@@ -136,7 +136,6 @@ export const makePayment = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 export const deletePayment = async (req, res) => {
     try {
         const { paymentId } = req.params;
