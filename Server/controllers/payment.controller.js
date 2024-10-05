@@ -13,7 +13,6 @@ export const getAllPayments = async (req, res) => {
     }
 };
 
-
 export const makePayment = async (req, res) => {
     try {
         const { loanId, amountPaid, loanType, paymentDate } = req.body;
