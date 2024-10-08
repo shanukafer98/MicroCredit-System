@@ -29,7 +29,7 @@ export const makePayment = async (req, res) => {
             return res.status(404).json({ message: 'Loan not found' });
         }
 
-        // Create payment record
+        // Create a payment record
         const payment = new Payment({
             loanId,
             amountPaid,
@@ -75,14 +75,16 @@ export const makePayment = async (req, res) => {
                 }
             }
 
-            // Apply excess payment to principal
+            // Apply any excess payment to the principal
             if (remainingPayment > 0) {
                 loan.principalAmount -= remainingPayment;
                 remainingPayment = 0;
             }
 
-            // Calculate new late fee based on unpaid interest
+            // Calculate new late fee if there's remaining unpaid interest
             loan.lateFee = loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
+
+            // Update the total amount due
             loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
 
         // Handle payments for Loan Type 2
@@ -113,28 +115,45 @@ export const makePayment = async (req, res) => {
             if (remainingPayment > 0) {
                 if (remainingPayment >= loan.monthlyInstallment) {
                     remainingPayment -= loan.monthlyInstallment;
-                    loan.monthlyInstallment = 0;
 
-                    // Reduce the principal once full installment is paid
+                    // Reduce the principal only if full installment is paid
                     loan.principalAmount -= loan.monthlyInstallment;
+                    loan.monthlyInstallment = 0;
                 } else {
                     loan.monthlyInstallment -= remainingPayment;
                     remainingPayment = 0;
                 }
             }
 
-            // Calculate new late fee based on unpaid installment
+            // Calculate new late fee if there's remaining unpaid installment
             loan.lateFee = loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
+
+            // Update the total amount due
             loan.totalDue = loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
         }
 
-        // Save the loan after updates
+        // Update loan's lastPaymentDate
+        loan.lastPaymentDate = paymentDate;
+
+        // Check if the loan is completed (principal amount is 0)
+        if (loan.principalAmount <= 0) {
+            loan.status = 'completed'; // Loan is fully paid
+        } else if (loan.totalDue > 0) {
+            loan.status = 'delayed'; // Loan has unpaid dues
+        } else {
+            loan.status = 'active'; // Loan is active with no dues
+        }
+
+        // Save the loan after all updates
         await loan.save();
         res.status(200).json(loan);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
+
+
+
 export const deletePayment = async (req, res) => {
     try {
         const { paymentId } = req.params;
