@@ -25,6 +25,8 @@ export const createLoan = async (req, res) => {
     }
 };
 
+
+
 export const getAllLoans = async (req, res) => {
     try {
         const {clientID} = req.params;
@@ -49,6 +51,7 @@ export const getAllLoans = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 export const deleteLoan =  async (req, res) => {
 
