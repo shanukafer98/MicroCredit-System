@@ -53,6 +53,7 @@ export const getAllLoans = async (req, res) => {
 };
 
 
+
 export const deleteLoan =  async (req, res) => {
 
     const { loanType, id } = req.query;
