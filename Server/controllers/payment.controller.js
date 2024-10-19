@@ -261,3 +261,79 @@ export const deletePayment = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+
+const paymentCalculator   = async  (req,res) => {
+    const {loanId,loanType,paymentId} = req.params;
+    const payments = await Payment.find({ loanId });
+    let loan;
+
+        // Dynamically load the loan based on loanType
+        if (loanType === 'type1') {
+            loan = await LoanType1.findById(loanId);
+
+            if (!loan) {
+                return res.status(404).json({ message: 'Loan not found' });
+            }
+
+            let lateFee = 0 ;
+            let unpaidInterest = 0 ;
+            let totalDue = 0 ;
+            let monthlyInterest = loan.monthlyInterest ;
+            let principalAmount = loan.principalAmount;
+        
+            payments.map((payment) =>   {
+
+                let remaining_payment = payment.amountPaid 
+
+
+
+                if (remaining_payment >= lateFee) {
+                    lateFee = 0;
+                    remaining_payment -= lateFee
+
+                    if(remaining_payment >= unpaidInterest){
+                        unpaidInterest = 0;
+                        remaining_payment -= unpaidInterest
+
+                        if(remaining_payment >= monthlyInterest){
+                            remaining_payment -= monthlyInterest
+                            principalAmount -= remaining_payment
+
+
+                           
+                        }else{
+                           monthlyInterest -= remaining_payment
+                           lateFee = monthlyInterest * (loan.latefeeInterest / 100)
+                           
+
+                        }
+
+                    }else{
+
+                        unpaidInterest -= remaining_payment
+                        
+                    }
+                    
+                }else{
+                    lateFee -= remaining_payment
+
+                }
+
+                    
+        
+        
+            })
+
+
+        } else if (loanType === 'type2') {
+            loan = await LoanType2.findById(loanId);
+        }
+
+        
+
+
+
+
+  
+}
