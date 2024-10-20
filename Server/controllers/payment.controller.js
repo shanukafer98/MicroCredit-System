@@ -271,7 +271,7 @@ export const paymentCalculator = async (req, res) => {
     const { loanId, loanType } = req.params;
     const payments = await Payment.find({ loanId });
     let loan;
-  
+   console.log(loanType);
     // Dynamically load the loan based on loanType
     if (loanType === "Type1") {
       loan = await LoanType1.findById(loanId);
