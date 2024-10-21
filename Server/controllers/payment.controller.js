@@ -36,119 +36,120 @@ export const makePayment = async (req, res) => {
       paymentDate,
     });
     await payment.save();
+    res.status(201);
 
-    let remainingPayment = amountPaid;
+    // let remainingPayment = amountPaid;
 
-    // Handle payments for Loan Type 1
-    if (loanType === "Type1") {
-      // Pay off unpaid interest
-      if (loan.unpaidInterest > 0) {
-        if (remainingPayment >= loan.unpaidInterest) {
-          remainingPayment -= loan.unpaidInterest;
-          loan.unpaidInterest = 0;
-        } else {
-          loan.unpaidInterest -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    // // Handle payments for Loan Type 1
+    // if (loanType === "Type1") {
+    //   // Pay off unpaid interest
+    //   if (loan.unpaidInterest > 0) {
+    //     if (remainingPayment >= loan.unpaidInterest) {
+    //       remainingPayment -= loan.unpaidInterest;
+    //       loan.unpaidInterest = 0;
+    //     } else {
+    //       loan.unpaidInterest -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Pay off late fees
-      if (loan.lateFee > 0) {
-        if (remainingPayment >= loan.lateFee) {
-          remainingPayment -= loan.lateFee;
-          loan.lateFee = 0;
-        } else {
-          loan.lateFee -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    //   // Pay off late fees
+    //   if (loan.lateFee > 0) {
+    //     if (remainingPayment >= loan.lateFee) {
+    //       remainingPayment -= loan.lateFee;
+    //       loan.lateFee = 0;
+    //     } else {
+    //       loan.lateFee -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Pay off current month's interest
-      if (remainingPayment > 0) {
-        if (remainingPayment >= loan.monthlyInterest) {
-          remainingPayment -= loan.monthlyInterest;
-          loan.monthlyInterest = 0;
-        } else {
-          loan.monthlyInterest -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    //   // Pay off current month's interest
+    //   if (remainingPayment > 0) {
+    //     if (remainingPayment >= loan.monthlyInterest) {
+    //       remainingPayment -= loan.monthlyInterest;
+    //       loan.monthlyInterest = 0;
+    //     } else {
+    //       loan.monthlyInterest -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Apply any excess payment to the principal
-      if (remainingPayment > 0) {
-        loan.principalAmount -= remainingPayment;
-        remainingPayment = 0;
-      }
+    //   // Apply any excess payment to the principal
+    //   if (remainingPayment > 0) {
+    //     loan.principalAmount -= remainingPayment;
+    //     remainingPayment = 0;
+    //   }
 
-      // Calculate new late fee if there's remaining unpaid interest
-      loan.lateFee =
-        loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
+    //   // Calculate new late fee if there's remaining unpaid interest
+    //   loan.lateFee =
+    //     loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
 
-      // Update the total amount due
-      loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
+    //   // Update the total amount due
+    //   loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
 
-      // Handle payments for Loan Type 2
-    } else if (loanType === "Type2") {
-      // Pay off unpaid installment
-      if (loan.unpaidInstallment > 0) {
-        if (remainingPayment >= loan.unpaidInstallment) {
-          remainingPayment -= loan.unpaidInstallment;
-          loan.unpaidInstallment = 0;
-        } else {
-          loan.unpaidInstallment -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    //   // Handle payments for Loan Type 2
+    // } else if (loanType === "Type2") {
+    //   // Pay off unpaid installment
+    //   if (loan.unpaidInstallment > 0) {
+    //     if (remainingPayment >= loan.unpaidInstallment) {
+    //       remainingPayment -= loan.unpaidInstallment;
+    //       loan.unpaidInstallment = 0;
+    //     } else {
+    //       loan.unpaidInstallment -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Pay off late fees
-      if (loan.lateFee > 0) {
-        if (remainingPayment >= loan.lateFee) {
-          remainingPayment -= loan.lateFee;
-          loan.lateFee = 0;
-        } else {
-          loan.lateFee -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    //   // Pay off late fees
+    //   if (loan.lateFee > 0) {
+    //     if (remainingPayment >= loan.lateFee) {
+    //       remainingPayment -= loan.lateFee;
+    //       loan.lateFee = 0;
+    //     } else {
+    //       loan.lateFee -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Pay off current month's installment
-      if (remainingPayment > 0) {
-        if (remainingPayment >= loan.monthlyInstallment) {
-          remainingPayment -= loan.monthlyInstallment;
+    //   // Pay off current month's installment
+    //   if (remainingPayment > 0) {
+    //     if (remainingPayment >= loan.monthlyInstallment) {
+    //       remainingPayment -= loan.monthlyInstallment;
 
-          // Reduce the principal only if full installment is paid
-          loan.principalAmount -= loan.monthlyInstallment;
-          loan.monthlyInstallment = 0;
-        } else {
-          loan.monthlyInstallment -= remainingPayment;
-          remainingPayment = 0;
-        }
-      }
+    //       // Reduce the principal only if full installment is paid
+    //       loan.principalAmount -= loan.monthlyInstallment;
+    //       loan.monthlyInstallment = 0;
+    //     } else {
+    //       loan.monthlyInstallment -= remainingPayment;
+    //       remainingPayment = 0;
+    //     }
+    //   }
 
-      // Calculate new late fee if there's remaining unpaid installment
-      loan.lateFee =
-        loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
+    //   // Calculate new late fee if there's remaining unpaid installment
+    //   loan.lateFee =
+    //     loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
 
-      // Update the total amount due
-      loan.totalDue =
-        loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
-    }
+    //   // Update the total amount due
+    //   loan.totalDue =
+    //     loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
+    // }
 
-    // Update loan's lastPaymentDate
-    loan.lastPaymentDate = paymentDate;
+    // // Update loan's lastPaymentDate
+    // loan.lastPaymentDate = paymentDate;
 
-    // Check if the loan is completed (principal amount is 0)
-    if (loan.principalAmount <= 0) {
-      loan.status = "completed"; // Loan is fully paid
-    } else if (loan.totalDue > 0) {
-      loan.status = "delayed"; // Loan has unpaid dues
-    } else {
-      loan.status = "active"; // Loan is active with no dues
-    }
+    // // Check if the loan is completed (principal amount is 0)
+    // if (loan.principalAmount <= 0) {
+    //   loan.status = "completed"; // Loan is fully paid
+    // } else if (loan.totalDue > 0) {
+    //   loan.status = "delayed"; // Loan has unpaid dues
+    // } else {
+    //   loan.status = "active"; // Loan is active with no dues
+    // }
 
-    // Save the loan after all updates
-    await loan.save();
-    res.status(200).json(loan);
+    // // Save the loan after all updates
+    // await loan.save();
+    // res.status(200).json(loan);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -166,183 +167,254 @@ export const deletePayment = async (req, res) => {
     const { loanId, amountPaid, loanType } = payment;
     let loan;
 
-    // Dynamically load the loan based on loanType
-    if (loanType === "Type1") {
-      loan = await LoanType1.findById(loanId);
-    } else if (loanType === "Type2") {
-      loan = await LoanType2.findById(loanId);
-    }
-
-    if (!loan) {
-      return res.status(404).json({ message: "Loan not found" });
-    }
-
-    let remainingRefund = amountPaid;
-
-    // Handle refunds and interest/fees calculations for loanType1
-    if (loanType === "Type1") {
-      // Refund current month's interest
-      if (loan.monthlyInterest < loan.originalMonthlyInterest) {
-        const refundAmount =
-          loan.originalMonthlyInterest - loan.monthlyInterest;
-        if (remainingRefund >= refundAmount) {
-          remainingRefund -= refundAmount;
-          loan.monthlyInterest = loan.originalMonthlyInterest;
-        } else {
-          loan.monthlyInterest += remainingRefund;
-          remainingRefund = 0;
-        }
-      }
-
-      // Refund late fees
-      if (loan.lateFee < loan.originalLateFee) {
-        const refundAmount = loan.originalLateFee - loan.lateFee;
-        if (remainingRefund >= refundAmount) {
-          remainingRefund -= refundAmount;
-          loan.lateFee = loan.originalLateFee;
-        } else {
-          loan.lateFee += remainingRefund;
-          remainingRefund = 0;
-        }
-      }
-
-      // Refund unpaid interest
-      if (remainingRefund > 0) {
-        loan.unpaidInterest += remainingRefund;
-      }
-
-      // Calculate new late fee and total due
-      loan.lateFee =
-        loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
-      loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
-
-      // Handle refunds and fees calculations for loanType2
-    } else if (loanType === "Type2") {
-      // Refund current month's installment
-      if (loan.monthlyInstallment < loan.originalMonthlyInstallment) {
-        const refundAmount =
-          loan.originalMonthlyInstallment - loan.monthlyInstallment;
-        if (remainingRefund >= refundAmount) {
-          remainingRefund -= refundAmount;
-          loan.monthlyInstallment = loan.originalMonthlyInstallment;
-        } else {
-          loan.monthlyInstallment += remainingRefund;
-          remainingRefund = 0;
-        }
-      }
-
-      // Refund late fees
-      if (loan.lateFee < loan.originalLateFee) {
-        const refundAmount = loan.originalLateFee - loan.lateFee;
-        if (remainingRefund >= refundAmount) {
-          remainingRefund -= refundAmount;
-          loan.lateFee = loan.originalLateFee;
-        } else {
-          loan.lateFee += remainingRefund;
-          remainingRefund = 0;
-        }
-      }
-
-      // Refund unpaid installment
-      if (remainingRefund > 0) {
-        loan.unpaidInstallment += remainingRefund;
-      }
-
-      // Calculate new late fee and total due
-      loan.lateFee =
-        loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
-      loan.totalDue =
-        loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
-    }
-
-    // Save the loan after updates
-    await loan.save();
-
-    // Delete the payment
     await Payment.findByIdAndDelete(paymentId);
 
     res.status(200).json({ message: "Payment deleted successfully" });
+
+    // // Dynamically load the loan based on loanType
+    // if (loanType === "Type1") {
+    //   loan = await LoanType1.findById(loanId);
+    // } else if (loanType === "Type2") {
+    //   loan = await LoanType2.findById(loanId);
+    // }
+
+    // if (!loan) {
+    //   return res.status(404).json({ message: "Loan not found" });
+    // }
+
+    // let remainingRefund = amountPaid;
+
+    // // Handle refunds and interest/fees calculations for loanType1
+    // if (loanType === "Type1") {
+    //   // Refund current month's interest
+    //   if (loan.monthlyInterest < loan.originalMonthlyInterest) {
+    //     const refundAmount =
+    //       loan.originalMonthlyInterest - loan.monthlyInterest;
+    //     if (remainingRefund >= refundAmount) {
+    //       remainingRefund -= refundAmount;
+    //       loan.monthlyInterest = loan.originalMonthlyInterest;
+    //     } else {
+    //       loan.monthlyInterest += remainingRefund;
+    //       remainingRefund = 0;
+    //     }
+    //   }
+
+    //   // Refund late fees
+    //   if (loan.lateFee < loan.originalLateFee) {
+    //     const refundAmount = loan.originalLateFee - loan.lateFee;
+    //     if (remainingRefund >= refundAmount) {
+    //       remainingRefund -= refundAmount;
+    //       loan.lateFee = loan.originalLateFee;
+    //     } else {
+    //       loan.lateFee += remainingRefund;
+    //       remainingRefund = 0;
+    //     }
+    //   }
+
+    //   // Refund unpaid interest
+    //   if (remainingRefund > 0) {
+    //     loan.unpaidInterest += remainingRefund;
+    //   }
+
+    //   // Calculate new late fee and total due
+    //   loan.lateFee =
+    //     loan.monthlyInterest > 0 ? (loan.monthlyInterest * 10) / 100 : 0;
+    //   loan.totalDue = loan.unpaidInterest + loan.lateFee + loan.monthlyInterest;
+
+    //   // Handle refunds and fees calculations for loanType2
+    // } else if (loanType === "Type2") {
+    //   // Refund current month's installment
+    //   if (loan.monthlyInstallment < loan.originalMonthlyInstallment) {
+    //     const refundAmount =
+    //       loan.originalMonthlyInstallment - loan.monthlyInstallment;
+    //     if (remainingRefund >= refundAmount) {
+    //       remainingRefund -= refundAmount;
+    //       loan.monthlyInstallment = loan.originalMonthlyInstallment;
+    //     } else {
+    //       loan.monthlyInstallment += remainingRefund;
+    //       remainingRefund = 0;
+    //     }
+    //   }
+
+    //   // Refund late fees
+    //   if (loan.lateFee < loan.originalLateFee) {
+    //     const refundAmount = loan.originalLateFee - loan.lateFee;
+    //     if (remainingRefund >= refundAmount) {
+    //       remainingRefund -= refundAmount;
+    //       loan.lateFee = loan.originalLateFee;
+    //     } else {
+    //       loan.lateFee += remainingRefund;
+    //       remainingRefund = 0;
+    //     }
+    //   }
+
+    //   // Refund unpaid installment
+    //   if (remainingRefund > 0) {
+    //     loan.unpaidInstallment += remainingRefund;
+    //   }
+
+    //   // Calculate new late fee and total due
+    //   loan.lateFee =
+    //     loan.monthlyInstallment > 0 ? (loan.monthlyInstallment * 1) / 100 : 0;
+    //   loan.totalDue =
+    //     loan.unpaidInstallment + loan.lateFee + loan.monthlyInstallment;
+    // }
+
+    // // Save the loan after updates
+    // await loan.save();
+
+    // // Delete the payment
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
 export const paymentCalculator = async (req, res) => {
-    const { loanId, loanType } = req.params;
-    const payments = await Payment.find({ loanId });
-    let loan;
-   console.log(loanType);
-    // Dynamically load the loan based on loanType
-    if (loanType === "Type1") {
-      loan = await LoanType1.findById(loanId);
-  
-      if (!loan) {
-        return res.status(404).json({ message: "Loan not found" });
-      }
-  
-      let lateFee = 0;
-      let total_lateFee = 0;
-      let total_unpaidInterest = 0;
-      let monthlyInterest = loan.monthlyInterest;
-      let principalAmount = loan.principalAmount;
-  
-      payments.forEach((payment) => {
-        let remaining_payment = payment.amountPaid;
-  
-        if (remaining_payment >= total_lateFee) {
-          remaining_payment -= total_lateFee;
-          total_lateFee = 0;
-  
-          if (remaining_payment >= total_unpaidInterest) {
-            remaining_payment -= total_unpaidInterest;
-            total_unpaidInterest = 0;
-  
-            if (remaining_payment >= monthlyInterest) {
-              remaining_payment -= monthlyInterest;
-              monthlyInterest = 0;
-              principalAmount -= remaining_payment;
-            } else {
-              monthlyInterest -= remaining_payment;
-              total_unpaidInterest += monthlyInterest;
-              lateFee = monthlyInterest * (loan.latefeeInterest / 100);
-              total_lateFee += lateFee;
-            }
+  const { loanId, loanType } = req.params;
+  const payments = await Payment.find({ loanId });
+  let loan;
+  console.log(loanId, loanType);
+
+  // Dynamically load the loan based on loanType
+  if (loanType === "Type1") {
+    loan = await LoanType1.findById(loanId);
+
+    if (!loan) {
+      return res.status(404).json({ message: "Loan not found" });
+    }
+
+    let lateFee = 0;
+    let total_lateFee = 0;
+    let total_unpaidInterest = 0;
+    // let monthlyInterest = loan.monthlyInterest;
+    let principalAmount = loan.principalAmount;
+
+    // Array to accumulate results
+    const results = [];
+
+    payments.forEach((payment) => {
+      let remaining_payment = payment.amountPaid;
+      let monthlyInterest = principalAmount * (loan.interestRate / 100);
+      let interest = principalAmount * (loan.interestRate / 100);
+
+      // Pay off late fees first
+      if (remaining_payment >= total_lateFee) {
+        remaining_payment -= total_lateFee;
+        total_lateFee = 0;
+
+        // Pay off unpaid interest next
+        if (remaining_payment >= total_unpaidInterest) {
+          remaining_payment -= total_unpaidInterest;
+          total_unpaidInterest = 0;
+
+          // Pay off monthly interest next
+          if (remaining_payment >= monthlyInterest) {
+            remaining_payment -= monthlyInterest;
+            monthlyInterest = 0;
+            principalAmount -= remaining_payment;
           } else {
-            total_unpaidInterest -= remaining_payment;
-            monthlyInterest = principalAmount * (loan.interestRate / 100);
+            monthlyInterest -= remaining_payment;
             total_unpaidInterest += monthlyInterest;
             lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+
             total_lateFee += lateFee;
           }
         } else {
-          total_lateFee -= remaining_payment;
+          total_unpaidInterest -= remaining_payment;
           monthlyInterest = principalAmount * (loan.interestRate / 100);
           total_unpaidInterest += monthlyInterest;
           lateFee = monthlyInterest * (loan.latefeeInterest / 100);
           total_lateFee += lateFee;
         }
-      });
-  
-      return res.json({
+      } else {
+        total_lateFee -= remaining_payment;
+        monthlyInterest = principalAmount * (loan.interestRate / 100);
+        total_unpaidInterest += monthlyInterest;
+        lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+        total_lateFee += lateFee;
+      }
+
+      // Accumulate the result for this payment
+      results.push({
+        payment: payment.amountPaid,
         lateFee,
         total_lateFee,
         total_unpaidInterest,
-        monthlyInterest,
+        interest,
         principalAmount,
       });
-    } else if (loanType === "Type2") {
-      loan = await LoanType2.findById(loanId);
-  
-      if (!loan) {
-        return res.status(404).json({ message: "Loan not found" });
-      }
-  
-      // Add logic for loanType2 if needed
-  
-      return res.json({ message: "Loan type 2 calculations not implemented" });
-    } else {
-      return res.status(400).json({ message: "Invalid loans type" });
+    });
+
+    // Send all accumulated results
+    return res.json(results);
+  } else if (loanType === "Type2") {
+    loan = await LoanType2.findById(loanId);
+
+    if (!loan) {
+      return res.status(404).json({ message: "Loan not found" });
     }
-  };
 
+    let lateFee = 0;
+    let total_lateFee = 0;
+    let total_unpaidInstallment  = loan.unpaidInstallment
+  
+  
+    // Array to accumulate results
+    const results = [];
 
+    payments.forEach((payment) => {
+      let remaining_payment = payment.amountPaid;
+      let monthlyInterest = principalAmount * (loan.interestRate / 100);
+      let interest = principalAmount * (loan.interestRate / 100);
+
+      // Pay off late fees first
+      if (remaining_payment >= total_lateFee) {
+        remaining_payment -= total_lateFee;
+        total_lateFee = 0;
+
+        // Pay off unpaid interest next
+        if (remaining_payment >= total_unpaidInterest) {
+          remaining_payment -= total_unpaidInterest;
+          total_unpaidInterest = 0;
+
+          // Pay off monthly interest next
+          if (remaining_payment >= monthlyInterest) {
+            remaining_payment -= monthlyInterest;
+            monthlyInterest = 0;
+            principalAmount -= remaining_payment;
+          } else {
+            monthlyInterest -= remaining_payment;
+            total_unpaidInterest += monthlyInterest;
+            lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+
+            total_lateFee += lateFee;
+          }
+        } else {
+          total_unpaidInterest -= remaining_payment;
+          monthlyInterest = principalAmount * (loan.interestRate / 100);
+          total_unpaidInterest += monthlyInterest;
+          lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+          total_lateFee += lateFee;
+        }
+      } else {
+        total_lateFee -= remaining_payment;
+        monthlyInterest = principalAmount * (loan.interestRate / 100);
+        total_unpaidInterest += monthlyInterest;
+        lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+        total_lateFee += lateFee;
+      }
+
+      // Accumulate the result for this payment
+      results.push({
+        payment: payment.amountPaid,
+        lateFee,
+        total_lateFee,
+        total_unpaidInterest,
+        interest,
+        principalAmount,
+      });
+    });
+  } else {
+    return res.status(400).json({ message: "Invalid loan type" });
+  }
+};
