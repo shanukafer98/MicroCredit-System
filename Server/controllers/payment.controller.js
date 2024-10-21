@@ -359,12 +359,11 @@ export const paymentCalculator = async (req, res) => {
     let total_unpaidInstallment  = loan.unpaidInstallment
   
   
-    // Array to accumulate results
+ 
     const results = [];
 
     payments.forEach((payment) => {
       let remaining_payment = payment.amountPaid;
-     
       let interest = principalAmount * (loan.interestRate / 100);
 
       // Pay off late fees first
