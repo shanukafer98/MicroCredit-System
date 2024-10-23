@@ -382,6 +382,7 @@ export const paymentCalculator = async (req, res) => {
             total_due -= monthly_installment;
             monthly_installment = 0;
             total_due -= remaining_payment;
+            
           } else {
             monthly_installment -= remaining_payment;
             total_due -= remaining_payment;
