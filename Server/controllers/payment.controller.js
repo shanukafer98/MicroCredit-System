@@ -269,6 +269,8 @@ export const deletePayment = async (req, res) => {
   }
 };
 
+
+
 export const paymentCalculator = async (req, res) => {
   const { loanId, loanType } = req.params;
   const payments = await Payment.find({ loanId });
@@ -286,7 +288,6 @@ export const paymentCalculator = async (req, res) => {
     let lateFee = 0;
     let total_lateFee = 0;
     let total_unpaidInterest = 0;
-    // let monthlyInterest = loan.monthlyInterest;
     let principalAmount = loan.principalAmount;
 
     // Array to accumulate results
@@ -316,7 +317,6 @@ export const paymentCalculator = async (req, res) => {
             monthlyInterest -= remaining_payment;
             total_unpaidInterest += monthlyInterest;
             lateFee = monthlyInterest * (loan.latefeeInterest / 100);
-
             total_lateFee += lateFee;
           }
         } else {
@@ -356,50 +356,50 @@ export const paymentCalculator = async (req, res) => {
 
     let lateFee = 0;
     let total_lateFee = 0;
-    let total_unpaidInstallment  = loan.unpaidInstallment
-  
-  
- 
+    let total_unpaidInstallment = 0;
+    let monthly_installment = (loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100)) / loan.loanDuration;
+    let total_due = loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100);
+
     const results = [];
 
     payments.forEach((payment) => {
       let remaining_payment = payment.amountPaid;
-      let interest = principalAmount * (loan.interestRate / 100);
 
       // Pay off late fees first
       if (remaining_payment >= total_lateFee) {
         remaining_payment -= total_lateFee;
         total_lateFee = 0;
 
-        // Pay off unpaid interest next
-        if (remaining_payment >= total_unpaidInterest) {
-          remaining_payment -= total_unpaidInterest;
-          total_unpaidInterest = 0;
+        // Pay off unpaid installments next
+        if (remaining_payment >= total_unpaidInstallment) {
+          remaining_payment -= total_unpaidInstallment;
+          total_due -= total_unpaidInstallment;
+          total_unpaidInstallment = 0;
 
-          // Pay off monthly interest next
-          if (remaining_payment >= monthlyInterest) {
-            remaining_payment -= monthlyInterest;
-            monthlyInterest = 0;
-            principalAmount -= remaining_payment;
+          // Pay off monthly installment next
+          if (remaining_payment >= monthly_installment) {
+            remaining_payment -= monthly_installment;
+            total_due -= monthly_installment;
+            monthly_installment = 0;
+            total_due -= remaining_payment;
           } else {
-            monthlyInterest -= remaining_payment;
-            total_unpaidInterest += monthlyInterest;
-            lateFee = monthlyInterest * (loan.latefeeInterest / 100);
-
+            monthly_installment -= remaining_payment;
+            total_due -= remaining_payment;
+            total_unpaidInstallment += monthly_installment;
+            lateFee = monthly_installment * (loan.latefeeInterest / 100);
             total_lateFee += lateFee;
           }
         } else {
-          total_unpaidInterest -= remaining_payment;
-          monthlyInterest = principalAmount * (loan.interestRate / 100);
-          total_unpaidInterest += monthlyInterest;
-          lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+          total_unpaidInstallment -= remaining_payment;
+          total_due -= total_unpaidInstallment;
+          total_unpaidInstallment += monthly_installment;
+          lateFee = monthly_installment * (loan.latefeeInterest / 100);
           total_lateFee += lateFee;
         }
       } else {
         total_lateFee -= remaining_payment;
-        monthlyInterest = principalAmount * (loan.interestRate / 100);
-        total_unpaidInterest += monthlyInterest;
-        lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+        total_unpaidInstallment += monthly_installment;
+        lateFee = monthly_installment * (loan.latefeeInterest / 100);
         total_lateFee += lateFee;
       }
 
@@ -408,11 +408,14 @@ export const paymentCalculator = async (req, res) => {
         payment: payment.amountPaid,
         lateFee,
         total_lateFee,
-        total_unpaidInterest,
-        interest,
-        principalAmount,
+        total_unpaidInstallment,
+        monthly_installment,
+        total_due,
       });
     });
+
+    // Send all accumulated results
+    return res.json(results);
   } else {
     return res.status(400).json({ message: "Invalid loan type" });
   }
