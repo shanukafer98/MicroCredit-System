@@ -36,7 +36,7 @@ export const makePayment = async (req, res) => {
       paymentDate,
     });
     await payment.save();
-    res.status(201);
+    res.status(200).json({ message: "Payment made successfully" });
 
     // let remainingPayment = amountPaid;
 
@@ -295,59 +295,82 @@ export const paymentCalculator = async (req, res) => {
 
     payments.forEach((payment) => {
       let remaining_payment = payment.amountPaid;
-      let monthlyInterest = principalAmount * (loan.interestRate / 100);
-      let interest = principalAmount * (loan.interestRate / 100);
+      let monthlyInterest = Math.round(principalAmount * (loan.interestRate / 100));
+      let interest = Math.round(principalAmount * (loan.interestRate / 100));
+      let calculation_steps = [];
+
+      calculation_steps.push(`Initial payment: LKR ${payment.amountPaid}`);
 
       // Pay off late fees first
       if (remaining_payment >= total_lateFee) {
+        calculation_steps.push(`Paying off late fees: LKR ${total_lateFee}`);
         remaining_payment -= total_lateFee;
         total_lateFee = 0;
 
         // Pay off unpaid interest next
         if (remaining_payment >= total_unpaidInterest) {
+          calculation_steps.push(`Paying off unpaid interest: LKR ${total_unpaidInterest}`);
           remaining_payment -= total_unpaidInterest;
           total_unpaidInterest = 0;
 
           // Pay off monthly interest next
           if (remaining_payment >= monthlyInterest) {
+            calculation_steps.push(`Paying off full monthly interest: LKR ${monthlyInterest}`);
             remaining_payment -= monthlyInterest;
             monthlyInterest = 0;
             principalAmount -= remaining_payment;
+            calculation_steps.push(`Remaining payment applied to principal: LKR ${remaining_payment}`);
           } else {
+            calculation_steps.push(`Partial payment towards monthly interest: LKR ${remaining_payment}`);
             monthlyInterest -= remaining_payment;
             total_unpaidInterest += monthlyInterest;
-            lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+            calculation_steps.push(`Remaining unpaid interest: LKR ${monthlyInterest}`);
+            remaining_payment = 0;
+
+            // Calculate late fee for unpaid monthly interest
+            lateFee = Math.round(monthlyInterest * (loan.latefeeInterest / 100));
             total_lateFee += lateFee;
+            calculation_steps.push(`Late fee applied: LKR ${lateFee}`);
           }
         } else {
+          // Partial payment towards unpaid interest
+          calculation_steps.push(`Partial payment towards unpaid interest: LKR ${remaining_payment}`);
           total_unpaidInterest -= remaining_payment;
-          monthlyInterest = principalAmount * (loan.interestRate / 100);
-          total_unpaidInterest += monthlyInterest;
-          lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+          remaining_payment = 0;
+
+          // Recalculate late fee for remaining unpaid interest
+          lateFee = Math.round(total_unpaidInterest * (loan.latefeeInterest / 100));
           total_lateFee += lateFee;
+          calculation_steps.push(`Late fee on remaining unpaid interest: LKR ${lateFee}`);
         }
       } else {
+        // Partial payment towards late fees
+        calculation_steps.push(`Partial payment towards late fee: LKR ${remaining_payment}`);
         total_lateFee -= remaining_payment;
-        monthlyInterest = principalAmount * (loan.interestRate / 100);
-        total_unpaidInterest += monthlyInterest;
-        lateFee = monthlyInterest * (loan.latefeeInterest / 100);
+        remaining_payment = 0;
+
+        // Recalculate late fee for next period
+        lateFee = Math.round(total_unpaidInterest * (loan.latefeeInterest / 100));
         total_lateFee += lateFee;
+        calculation_steps.push(`Recalculated late fee: LKR ${lateFee}`);
       }
 
       // Accumulate the result for this payment
       results.push({
-        payment: payment.amountPaid,
-        lateFee,
-        total_lateFee,
-        total_unpaidInterest,
-        interest,
-        principalAmount,
+        payment: `LKR ${Math.round(payment.amountPaid)}`,
+        lateFee: `LKR ${Math.round(lateFee)}`,
+        total_lateFee: `LKR ${Math.round(total_lateFee)}`,
+        total_unpaidInterest: `LKR ${Math.round(total_unpaidInterest)}`,
+        interest: `LKR ${Math.round(interest)}`,
+        principalAmount: `LKR ${Math.round(principalAmount)}`,
+        calculation_steps,  // Include the step-by-step breakdown
       });
     });
 
     // Send all accumulated results
     return res.json(results);
-  } else if (loanType === "Type2") {
+  }
+ else if (loanType === "Type2") {
     loan = await LoanType2.findById(loanId);
 
     if (!loan) {
@@ -356,62 +379,83 @@ export const paymentCalculator = async (req, res) => {
 
     let lateFee = 0;
     let total_lateFee = 0;
-    let total_unpaidInstallment = 0;
-    let monthly_installment = (loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100)) / loan.loanDuration;
-    let total_due = loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100);
+    let total_unpaidInstallment = loan.unpaidInstallment || 0;
+    const fixed_monthly_installment = Math.round((loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100)) / loan.loanDuration);
+    let total_due = Math.round(loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100));
 
     const results = [];
 
     payments.forEach((payment) => {
       let remaining_payment = payment.amountPaid;
+      let calculation_steps = [];
 
-      // Pay off late fees first
+      calculation_steps.push(`Initial payment: LKR ${payment.amountPaid}`);
+
+      // First, pay off the late fees
       if (remaining_payment >= total_lateFee) {
+        calculation_steps.push(`Paying off late fees: LKR ${total_lateFee}`);
         remaining_payment -= total_lateFee;
         total_lateFee = 0;
 
-        // Pay off unpaid installments next
+        // Then, pay off any unpaid installments
         if (remaining_payment >= total_unpaidInstallment) {
+          calculation_steps.push(`Paying off unpaid installment: LKR ${total_unpaidInstallment}`);
           remaining_payment -= total_unpaidInstallment;
           total_due -= total_unpaidInstallment;
           total_unpaidInstallment = 0;
 
-          // Pay off monthly installment next
-          if (remaining_payment >= monthly_installment) {
-            remaining_payment -= monthly_installment;
-            total_due -= monthly_installment;
-            monthly_installment = 0;
-            total_due -= remaining_payment;
-            
+          // Now, apply the payment to the current month's installment
+          if (remaining_payment >= fixed_monthly_installment) {
+            calculation_steps.push(`Paying full monthly installment: LKR ${fixed_monthly_installment}`);
+            remaining_payment -= fixed_monthly_installment;
+            total_due -= fixed_monthly_installment;
+            calculation_steps.push(`Remaining payment after full installment: LKR ${remaining_payment}`);
           } else {
-            monthly_installment -= remaining_payment;
+            // Partial payment for the current month's installment
+            calculation_steps.push(`Partial payment toward the current month's installment: LKR ${remaining_payment}`);
+            total_unpaidInstallment += fixed_monthly_installment - remaining_payment;
             total_due -= remaining_payment;
-            total_unpaidInstallment += monthly_installment;
-            lateFee = monthly_installment * (loan.latefeeInterest / 100);
+            calculation_steps.push(`Unpaid portion of current month's installment: LKR ${fixed_monthly_installment - remaining_payment}`);
+            remaining_payment = 0;
+
+            // Late fee applies to the unpaid portion of the current installment
+            lateFee = Math.round((fixed_monthly_installment - remaining_payment) * (loan.latefeeInterest / 100));
             total_lateFee += lateFee;
+            calculation_steps.push(`Late fee added: LKR ${lateFee}`);
           }
         } else {
+          // Partial payment toward unpaid installments
+          calculation_steps.push(`Partial payment toward unpaid installment: LKR ${remaining_payment}`);
           total_unpaidInstallment -= remaining_payment;
-          total_due -= total_unpaidInstallment;
-          total_unpaidInstallment += monthly_installment;
-          lateFee = monthly_installment * (loan.latefeeInterest / 100);
+          total_due -= remaining_payment;
+          remaining_payment = 0;
+
+          // Recalculate late fee on remaining unpaid installment
+          lateFee = Math.round(total_unpaidInstallment * (loan.latefeeInterest / 100));
           total_lateFee += lateFee;
+          calculation_steps.push(`Late fee on remaining unpaid installment: LKR ${lateFee}`);
         }
       } else {
+        // Partial payment toward late fees
+        calculation_steps.push(`Partial payment toward late fee: LKR ${remaining_payment}`);
         total_lateFee -= remaining_payment;
-        total_unpaidInstallment += monthly_installment;
-        lateFee = monthly_installment * (loan.latefeeInterest / 100);
+        remaining_payment = 0;
+
+        // Late fee is recalculated for the next period
+        lateFee = Math.round(total_unpaidInstallment * (loan.latefeeInterest / 100));
         total_lateFee += lateFee;
+        calculation_steps.push(`Recalculated late fee: LKR ${lateFee}`);
       }
 
       // Accumulate the result for this payment
       results.push({
-        payment: payment.amountPaid,
-        lateFee,
-        total_lateFee,
-        total_unpaidInstallment,
-        monthly_installment,
-        total_due,
+        payment: `LKR ${Math.round(payment.amountPaid)}`,
+        lateFee: `LKR ${Math.round(lateFee)}`,
+        total_lateFee: `LKR ${Math.round(total_lateFee)}`,
+        total_unpaidInstallment: `LKR ${Math.round(total_unpaidInstallment)}`,
+        fixed_monthly_installment: `LKR ${Math.round(fixed_monthly_installment)}`,
+        total_due: `LKR ${Math.round(total_due)}`,
+        calculation_steps,  // Include the step-by-step breakdown
       });
     });
 
@@ -420,4 +464,6 @@ export const paymentCalculator = async (req, res) => {
   } else {
     return res.status(400).json({ message: "Invalid loan type" });
   }
+
+
 };

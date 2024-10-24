@@ -5,6 +5,9 @@ import Modal from "react-modal";
 import PaymentForm from "./PaymentForm";
 import { useNavigate } from "react-router-dom";
 
+// Set the app element for react-modal
+Modal.setAppElement('#root');
+
 const LoanList = () => {
   const { loans, fetchLoans } = useLoanStore();
   const clientID = localStorage.getItem("clientID");
@@ -26,7 +29,7 @@ const LoanList = () => {
 
   useEffect(() => {
     fetchLoans(clientID);
-  });
+  }, [clientID, fetchLoans]);
 
   const openModal = (loan) => {
     setSelectedLoan(loan);
@@ -68,7 +71,7 @@ const LoanList = () => {
             <p>Principal Amount: Rs.{loan.principalAmount}</p>
             <p>Monthly Interest Rate: {loan.interestRate}%</p>
             <p>Late Fee Interest Rate: {loan.latefeeInterest}%</p>
-            {loan.monthlyInterest !== null && loan.monthlyInterest !== undefined    && (
+            {loan.monthlyInterest !== null && loan.monthlyInterest !== undefined && (
               <p>Monthly Interest: Rs. {loan.monthlyInterest.toFixed(2)}</p>
             )}
             {loan.loanDuration && (
@@ -79,26 +82,25 @@ const LoanList = () => {
                 Monthly Installment: Rs.{loan.monthlyInstallment.toFixed(2)}
               </p>
             )}
-
-            {loan.unpaidInterest !== null && loan.unpaidInterest !== undefined  && (
+            {/* {loan.unpaidInterest !== null && loan.unpaidInterest !== undefined && (
               <p>Unpaid Interest: Rs.{loan.unpaidInterest.toFixed(2)}</p>
             )}
             {loan.unpaidInstallment !== null && loan.unpaidInstallment !== undefined && (
               <p>Unpaid Installment: Rs.{loan.unpaidInstallment.toFixed(2)}</p>
             )}
             <p>Late Fee: Rs.{loan.lateFee.toFixed(2)}</p>
-            <p>Total Due: Rs.{loan.totalDue.toFixed(2)}</p>
+            <p>Total Due: Rs.{loan.totalDue.toFixed(2)}</p> */}
             <p>Status: {loan.status}</p>
             <p>
               Loan Issued Date & Time:{" "}
               {new Date(loan.createdAt).toLocaleDateString()} at{" "}
               {new Date(loan.createdAt).toLocaleTimeString()}
             </p>
-            <p>
+            {/* <p>
               Last loan update Date & Time:{" "}
               {new Date(loan.updatedAt).toLocaleDateString()} at{" "}
               {new Date(loan.updatedAt).toLocaleTimeString()}
-            </p>
+            </p> */}
             <div className="flex gap-5">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
@@ -129,7 +131,7 @@ const LoanList = () => {
           onRequestClose={closeModal}
           style={customStyles}
         >
-          <PaymentForm loanId={selectedLoan._id} loanType={selectedLoan.loanType}  onPaymentSuccess={closeModal}/>
+          <PaymentForm loanId={selectedLoan._id} loanType={selectedLoan.loanType} onPaymentSuccess={closeModal} />
         </Modal>
       )}
     </div>

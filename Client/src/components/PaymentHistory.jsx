@@ -23,7 +23,7 @@ const PaymentHistory = ({ loanId }) => {
     <div>
       {payments.map((payment) => (
         <div key={payment._id} className="payment-card">
-          <p>Amount Paid: {payment.amountPaid}</p>
+          <p>Amount Paid: Rs.{payment.amountPaid}</p>
           <p>Payment Date: {new Date(payment.paymentDate).toLocaleDateString()}</p>
           <button className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl" onClick={() => handleDeletePayment(payment._id)}>Delete Payment</button>
         </div>
