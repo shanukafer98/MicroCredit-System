@@ -59,6 +59,16 @@ const LoanList = () => {
     }
   };
 
+  const handleCalculation = async (loanID,loanType) => {
+    try{
+      navigate(`/payments/${loanID}/${loanType}`)
+
+    }catch(err){
+      console.log(err)
+    }
+
+  }
+
   return (
     <div>
       <div className="grid lg:grid-cols-3 sm:grid-cols-1 gap-4 m-2 ">
@@ -120,6 +130,12 @@ const LoanList = () => {
                 onClick={() => handleShowPayment(loan._id)}
               >
                 Show Payment History
+              </button>
+              <button
+                className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
+                onClick={() => handleCalculation(loan._id,loan.loanType)}
+              >
+                Calculate 
               </button>
             </div>
           </div>
