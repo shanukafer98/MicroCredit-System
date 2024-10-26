@@ -2,10 +2,13 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import  Clients  from "./Pages/Clients";
 import { Signup } from "./Pages/Signup";
-import { Signin } from "./Pages/Signin";
+import Signin from "./Pages/Signin";
 import { Toaster } from "react-hot-toast";
 import PaymentPage from "./Pages/PaymentPage";
 import LoanPage from "./Pages/LoanPage";
+
+
+
 
 
 
@@ -22,7 +25,8 @@ function App() {
 
              <Route path = "/clients" element = {<Clients/>}/>
              <Route path = "/loans" element = {<LoanPage/>}/>
-             <Route path="/payments/:loanId" element = {<PaymentPage />} />
+             <Route path="/payments/:loanId/:loanType" element={<PaymentPage />} />
+            
           </Route>
         </Routes>
         <Toaster position="top-center" reverseOrder={true} />

@@ -20,15 +20,35 @@ const PaymentHistory = ({ loanId }) => {
   };
 
   return (
-    <div>
-      {payments.map((payment) => (
-        <div key={payment._id} className="payment-card">
-          <p>Amount Paid: Rs.{payment.amountPaid}</p>
-          <p>Payment Date: {new Date(payment.paymentDate).toLocaleDateString()}</p>
-          
-          <button className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl" onClick={() => handleDeletePayment(payment._id)}>Delete Payment</button>
-        </div>
-      ))}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4 text-blue-600">Payment History</h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 shadow-lg">
+          <thead className="bg-blue-500 text-white">
+            <tr>
+              <th className="py-2 px-4 border-b text-center">Amount Paid</th>
+              <th className="py-2 px-4 border-b text-center">Payment Date</th>
+              <th className="py-2 px-4 border-b text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((payment) => (
+              <tr key={payment._id} className="hover:bg-blue-100">
+                <td className="py-2 px-4 border-b text-center">Rs.{payment.amountPaid}</td>
+                <td className="py-2 px-4 border-b text-center">{new Date(payment.paymentDate).toLocaleDateString()}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
+                    onClick={() => handleDeletePayment(payment._id)}
+                  >
+                    Delete Payment
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
