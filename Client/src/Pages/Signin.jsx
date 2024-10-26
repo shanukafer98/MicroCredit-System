@@ -189,6 +189,7 @@ const Signin = () => {
           <ul className="bg-gray-100 p-4 rounded-lg">
             {records.map((record) => (
               <li key={record._id} className="mb-2">
+                
                 <p><strong>Type:</strong> {record.type}</p>
                 <p><strong>Recorded At:</strong> {new Date(record.timestamp).toLocaleString()}</p>
               </li>
