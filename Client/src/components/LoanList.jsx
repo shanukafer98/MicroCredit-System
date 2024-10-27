@@ -113,7 +113,7 @@ const LoanList = () => {
             </p> */}
             <div className="flex gap-5">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-6 my-2 rounded shadow-2xl"
                 onClick={() => openModal(loan)}
               >
                 Make a Payment
@@ -125,12 +125,12 @@ const LoanList = () => {
               >
                 Delete Loan
               </button>
-              <button
+              {/* <button
                 className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
                 onClick={() => handleShowPayment(loan._id)}
               >
                 Show Payment History
-              </button>
+              </button> */}
               <button
                 className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
                 onClick={() => handleCalculation(loan._id,loan.loanType)}

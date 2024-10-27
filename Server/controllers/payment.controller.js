@@ -298,6 +298,7 @@ export const paymentCalculator = async (req, res) => {
       let monthlyInterest = Math.round(principalAmount * (loan.interestRate / 100));
       let interest = Math.round(principalAmount * (loan.interestRate / 100));
       let calculation_steps = [];
+      let lateFee = 0;
 
       calculation_steps.push(`Initial payment: LKR ${payment.amountPaid}`);
 
@@ -377,7 +378,7 @@ export const paymentCalculator = async (req, res) => {
       return res.status(404).json({ message: "Loan not found" });
     }
 
-    let lateFee = 0;
+ 
     let total_lateFee = 0;
     let total_unpaidInstallment = loan.unpaidInstallment || 0;
     const fixed_monthly_installment = Math.round((loan.principalAmount + ((loan.principalAmount * loan.interestRate * loan.loanDuration) / 100)) / loan.loanDuration);
@@ -388,6 +389,7 @@ export const paymentCalculator = async (req, res) => {
     payments.forEach((payment) => {
       let remaining_payment = payment.amountPaid;
       let calculation_steps = [];
+      let lateFee = 0;
 
       calculation_steps.push(`Initial payment: LKR ${payment.amountPaid}`);
 
@@ -416,11 +418,12 @@ export const paymentCalculator = async (req, res) => {
             total_unpaidInstallment += fixed_monthly_installment - remaining_payment;
             total_due -= remaining_payment;
             calculation_steps.push(`Unpaid portion of current month's installment: LKR ${fixed_monthly_installment - remaining_payment}`);
-            remaining_payment = 0;
+           
 
             // Late fee applies to the unpaid portion of the current installment
             lateFee = Math.round((fixed_monthly_installment - remaining_payment) * (loan.latefeeInterest / 100));
             total_lateFee += lateFee;
+            remaining_payment = 0;
             calculation_steps.push(`Late fee added: LKR ${lateFee}`);
           }
         } else {
@@ -431,7 +434,7 @@ export const paymentCalculator = async (req, res) => {
           remaining_payment = 0;
 
           // Recalculate late fee on remaining unpaid installment
-          lateFee = Math.round(total_unpaidInstallment * (loan.latefeeInterest / 100));
+          lateFee = Math.round(fixed_monthly_installment* (loan.latefeeInterest / 100));
           total_lateFee += lateFee;
           calculation_steps.push(`Late fee on remaining unpaid installment: LKR ${lateFee}`);
         }
@@ -442,7 +445,7 @@ export const paymentCalculator = async (req, res) => {
         remaining_payment = 0;
 
         // Late fee is recalculated for the next period
-        lateFee = Math.round(total_unpaidInstallment * (loan.latefeeInterest / 100));
+        lateFee = Math.round(fixed_monthly_installment * (loan.latefeeInterest / 100));
         total_lateFee += lateFee;
         calculation_steps.push(`Recalculated late fee: LKR ${lateFee}`);
       }
