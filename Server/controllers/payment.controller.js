@@ -556,8 +556,9 @@ export const dashboard = async (req, res) => {
     return res.status(400).json({ message: "Invalid loan type" });
   }
 
-  // Calculate net profit as total income minus interest and late fees
+
   const netProfit = totalIncome - totalInterest - totalLateFees;
+
 
   return res.json({
     totalIncome: `LKR ${Math.round(totalIncome)}`,
