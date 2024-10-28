@@ -470,3 +470,99 @@ export const paymentCalculator = async (req, res) => {
 
 
 };
+
+
+export const dashboard = async (req, res) => {
+  const { loanId, loanType } = req.params;
+  const { startDate, endDate } = req.query; // Get date range from query parameters
+
+  // Convert dates to Date objects for comparison
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  // Filter payments based on loanId and date range
+  const payments = await Payment.find({
+    loanId,
+    paymentDate: { $gte: start, $lte: end },  // Filter by date range
+  });
+
+  let loan;
+  let totalIncome = 0;
+  let totalLateFees = 0;
+  let totalInterest = 0;
+
+  if (loanType === "Type1") {
+    loan = await LoanType1.findById(loanId);
+
+    if (!loan) {
+      return res.status(404).json({ message: "Loan not found" });
+    }
+
+    let principalAmount = loan.principalAmount;
+
+    payments.forEach((payment) => {
+      let remainingPayment = payment.amountPaid;
+      let monthlyInterest = Math.round(principalAmount * (loan.interestRate / 100));
+      let lateFee = 0;
+
+      // Calculate income (total amount paid by the client)
+      totalIncome += payment.amountPaid;
+
+      // Process payment distribution as per logic
+      if (remainingPayment >= monthlyInterest) {
+        remainingPayment -= monthlyInterest;
+      } else {
+        // Unpaid interest accumulates
+        totalInterest += monthlyInterest - remainingPayment;
+        lateFee = Math.round((monthlyInterest - remainingPayment) * (loan.latefeeInterest / 100));
+        totalLateFees += lateFee;
+        remainingPayment = 0;
+      }
+
+      // Add unpaid amounts as interest or late fee if applicable
+      totalInterest += monthlyInterest;
+      totalLateFees += lateFee;
+    });
+
+  } else if (loanType === "Type2") {
+    loan = await LoanType2.findById(loanId);
+
+    if (!loan) {
+      return res.status(404).json({ message: "Loan not found" });
+    }
+
+    const fixedMonthlyInstallment = Math.round(
+      (loan.principalAmount + (loan.principalAmount * loan.interestRate * loan.loanDuration) / 100) /
+        loan.loanDuration
+    );
+
+    payments.forEach((payment) => {
+      let remainingPayment = payment.amountPaid;
+      let lateFee = 0;
+
+      totalIncome += payment.amountPaid;
+
+      if (remainingPayment >= fixedMonthlyInstallment) {
+        remainingPayment -= fixedMonthlyInstallment;
+      } else {
+        totalInterest += fixedMonthlyInstallment - remainingPayment;
+        lateFee = Math.round((fixedMonthlyInstallment - remainingPayment) * (loan.latefeeInterest / 100));
+        totalLateFees += lateFee;
+        remainingPayment = 0;
+      }
+    });
+
+  } else {
+    return res.status(400).json({ message: "Invalid loan type" });
+  }
+
+  // Calculate net profit as total income minus interest and late fees
+  const netProfit = totalIncome - totalInterest - totalLateFees;
+
+  return res.json({
+    totalIncome: `LKR ${Math.round(totalIncome)}`,
+    totalInterest: `LKR ${Math.round(totalInterest)}`,
+    totalLateFees: `LKR ${Math.round(totalLateFees)}`,
+    netProfit: `LKR ${Math.round(netProfit)}`,
+  });
+};
