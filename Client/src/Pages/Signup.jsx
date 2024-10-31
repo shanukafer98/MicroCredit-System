@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Signup = () => {
   const [user, setUser] = useState({
@@ -8,6 +9,7 @@ export const Signup = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +23,11 @@ export const Signup = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/signup", user);
+      const response = await axios.post("http://localhost:3000/api/auth/signup", user);
       console.log(response.data);
       toast.success("Signup successful!");
+      navigate("/");
+
     } catch (error) {
       toast.error("An error occurred during signup.");
       console.error(error);

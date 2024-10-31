@@ -1,6 +1,5 @@
 import User from '../models/auth.model.js';
 import bycryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils/error.js';   
 
 
@@ -11,8 +10,8 @@ export const signup = async (req, res) => {
     try{
         await newUser.save();
         res.status(201).send("User created successfully")
-    }catch(error){
-        next(error)
+    }catch(error){RE
+        res.status(500).send(error) 
     }
 
 }
@@ -33,7 +32,7 @@ export const signin  = async (req, res) => {
 
         res.status(200).json(rest)
     }catch(error){
-        next(error)
+        res.status(500).send(error) 
     }
 
 }
@@ -45,7 +44,7 @@ export const signOut = async (req, res) => {
     try{
         res.status(200).json("Signout successfully")
     }catch(error){
-        next(error)
+        res.status(500).send(error) 
     }
 
 }

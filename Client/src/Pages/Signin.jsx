@@ -17,7 +17,7 @@ const Signin = () => {
     }
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/signin", user);
+      const response = await axios.post("http://localhost:3000/api/auth/signin", user);
       console.log(response.data);
       toast.success("Signin successful");
     } catch (error) {
