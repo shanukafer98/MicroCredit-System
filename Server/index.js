@@ -6,14 +6,16 @@ import dotenv from "dotenv";
 import clientRouter from "./routes/client.route.js";
 import authRouter from "./routes/auth.route.js";
 import loanRouter from "./routes/loan.route.js";
-import paymentRouter from "./routes/payment.route.js";
-import vehicleRouter from "./routes/vehicle.route.js";
+
+
+
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
 
 dotenv.config();
 
@@ -42,6 +44,6 @@ app.get("/", (req, res) => {
 app.use("/api/client", clientRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/loans", loanRouter);
-app.use("/api/payments", paymentRouter);
-app.use('/api/vehicle', vehicleRouter);
+
+
 
