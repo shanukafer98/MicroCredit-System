@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [user, setUser] = useState({
@@ -9,6 +10,7 @@ const Signin = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,12 +20,15 @@ const Signin = () => {
     }
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:3000/api/auth/signin", user);
+      const response = await axios.get("http://localhost:3000/api/auth/signin", user);
       console.log(response.data);
       toast.success("Signin successful");
+      setTimeout(() => {
+        navigate("/clients");
+      }, 1000);
     } catch (error) {
-      toast.error(`Error: ${error.response.data.message}`);
       console.error(error);
+      toast.error("Signin failed");
     } finally {
       setLoading(false);
     }

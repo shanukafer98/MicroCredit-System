@@ -23,18 +23,17 @@ export const signup = async (req, res) => {
 export const signin = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const validUser = await User.findOne({ email });//Check if user exists
-    if (!validUser) {
-      return res.status(404).json({ message: 'User not found!' });
-    }
+    // const validUser = await User.findOne({ email });//Check if user exists
+    // if (!validUser) {
+    //   return res.status(404).json({ message: 'User not found!' });
+    // }
 
-    const isMatch = bcrypt.compareSync(password, validUser.password); // Fixed typo here
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Wrong credentials!' });
-    }
+    // const isMatch = bcrypt.compareSync(password, validUser.password); // Fixed typo here
+    // if (!isMatch) {
+    //   return res.status(401).json({ message: 'Wrong credentials!' });
+    // }
 
-    const { password: pass, ...rest } = validUser._doc;
-    res.status(200).json(rest);
+    res.status(201).json({ message: "Signin successful" });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
   }

@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import clientRouter from "./routes/client.route.js";
 import authRouter from "./routes/auth.route.js";
 import loanRouter from "./routes/loan.route.js";
+import paymentRouter from "./routes/payment.route.js";
 
 
 
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
 app.use("/api/client", clientRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/loans", loanRouter);
+app.use("/api/payments", paymentRouter);
 
 
 

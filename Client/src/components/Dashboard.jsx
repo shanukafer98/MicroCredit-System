@@ -8,8 +8,8 @@ const url = import.meta.env.VITE_BACKEND_URL;
 
 
 const Dashboard = ({ loanId, loanType }) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date('2024-01-01'));
+  const [endDate, setEndDate] = useState(new Date('2024-12-31'));
   const [data, setData] = useState({
     totalIncome: 0,
     totalInterest: 0,

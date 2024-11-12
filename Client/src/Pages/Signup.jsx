@@ -85,6 +85,12 @@ export const Signup = () => {
             {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
+        <p className="text-center mt-4">
+          Already have an account?{" "}
+          <a href="/" className="text-blue-500 hover:text-blue-700">
+            Signin
+          </a>
+        </p>
       </div>
       <Toaster position="top-center" reverseOrder={false} />
     </div>
