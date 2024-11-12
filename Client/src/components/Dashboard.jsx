@@ -75,7 +75,7 @@ const Dashboard = ({ loanId, loanType }) => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Loan Payment Dashboard</h2>
+      <h2 className="text-2xl font-semibold mb-4">Loan Payment Dashboard [On Testing]</h2>
 
       <div className="flex space-x-4 mb-6">
         <div>
