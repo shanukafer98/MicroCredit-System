@@ -96,7 +96,7 @@ const Dashboard = ({ loanId, loanType }) => {
             className="border px-2 py-1 rounded"
           />
         </div>
-        
+
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-6">
@@ -117,6 +117,7 @@ const Dashboard = ({ loanId, loanType }) => {
           <p>LKR {data.totalLateFees.toLocaleString()}</p>
         </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-6">
         <div>
@@ -139,6 +140,7 @@ const Dashboard = ({ loanId, loanType }) => {
             <Tooltip />
           </PieChart>
         </div>
+
 
         <div>
           <h3 className="font-medium text-lg mb-2">Income and Profit Comparison</h3>
