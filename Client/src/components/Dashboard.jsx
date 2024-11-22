@@ -86,6 +86,8 @@ const Dashboard = ({ loanId, loanType }) => {
             className="border px-2 py-1 rounded"
           />
         </div>
+
+
         <div>
           <label className="block font-medium">End Date:</label>
           <DatePicker
@@ -94,6 +96,7 @@ const Dashboard = ({ loanId, loanType }) => {
             className="border px-2 py-1 rounded"
           />
         </div>
+        
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-6">
