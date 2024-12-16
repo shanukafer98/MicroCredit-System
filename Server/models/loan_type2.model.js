@@ -54,6 +54,11 @@ const loanType2Schema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    bailType: {
+        type: String,
+        default: 'None'
+ 
+    },
 }, { timestamps: true });
 
 const loan_type2 = mongoose.model('LoanType2', loanType2Schema);

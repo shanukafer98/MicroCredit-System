@@ -10,6 +10,8 @@ const LoanForm = () => {
     principalAmount: "",
     latefeeInterest: "",
     loanDuration: "",
+    bailType: "",
+
   });
   const createLoan = useLoanStore((state) => state.createLoan);
 
@@ -81,6 +83,14 @@ const LoanForm = () => {
         placeholder="Late Fee Interest"
         className="input"
       />
+      <input
+        name="bailType"
+        value={loan.bailType}
+        onChange={handleChange}
+        placeholder="Bail Type"
+        className="input"
+      />
+      
       <button type="submit" className="btn">
         Create Loan
       </button>
