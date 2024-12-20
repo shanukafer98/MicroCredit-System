@@ -15,6 +15,11 @@ const loanType1Schema = new mongoose.Schema({
         default: 'Type1'
     },
 
+    weekLoan: {
+        type: Boolean,
+        default: false
+    },
+
     interestRate: {
         type: Number,
         required: true

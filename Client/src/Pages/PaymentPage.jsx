@@ -10,7 +10,7 @@ const PaymentPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Loan Details</h1>
+      <h1 className="text-2xl font-bold mb-4">Payment Details Section</h1>
       <PaymentHistory loanId={loanId} />
       <PaymentCalculator loanId={loanId} loanType={loanType} />
       <Dashboard loanId={loanId} loanType={loanType}  />

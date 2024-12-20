@@ -12,11 +12,13 @@ const LoanForm = () => {
     latefeeInterest: "",
     loanDuration: "",
     bailType: "",
+    weekLoan: false,
   });
   const createLoan = useLoanStore((state) => state.createLoan);
 
   const handleChange = (e) => {
-    setLoan({ ...loan, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setLoan({ ...loan, [name]: type === "checkbox" ? checked : value });
   };
 
   useEffect(() => {
@@ -37,6 +39,7 @@ const LoanForm = () => {
   };
 
   return (
+    <div  className="bg-slate-200 p-2 rounded-lg shadow-lg ">
     <motion.form
       onSubmit={handleSubmit}
       className="space-y-4"
@@ -80,10 +83,29 @@ const LoanForm = () => {
           <option value="type2">Type 2</option>
         </select>
       </motion.div>
+      {loan.loanType === "type1" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <label htmlFor="weekLoan" className="block text-sm font-medium text-gray-700 pb-2">
+            Week Loan
+          </label>
+          <input
+            type="checkbox"
+            id="weekLoan"
+            name="weekLoan"
+            checked={loan.weekLoan}
+            onChange={handleChange}
+            className="w-[30px] h-[30px]"
+          />
+        </motion.div>
+      )}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.5 }}
       >
         <label htmlFor="interestRate" className="block text-sm font-medium text-gray-700 pb-2">
           Monthly Interest Rate
@@ -99,7 +121,7 @@ const LoanForm = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 0.6 }}
       >
         <label htmlFor="principalAmount" className="block text-sm font-medium text-gray-700 pb-2">
           Principal Amount
@@ -116,7 +138,7 @@ const LoanForm = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.7 }}
         >
           <label htmlFor="loanDuration" className="block text-sm font-medium text-gray-700 pb-2">
             Loan Duration (in months)
@@ -133,7 +155,7 @@ const LoanForm = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
+        transition={{ delay: 0.8 }}
       >
         <label htmlFor="latefeeInterest" className="block text-sm font-medium text-gray-700 pb-2">
           Late Fee Interest
@@ -149,7 +171,7 @@ const LoanForm = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 0.9 }}
       >
         <label htmlFor="bailType" className="block text-sm font-medium text-gray-700 pb-2">
           Bail Type
@@ -171,7 +193,7 @@ const LoanForm = () => {
         Create Loan
       </motion.button>
     </motion.form>
-  );
+  </div>);
 };
 
 export default LoanForm;

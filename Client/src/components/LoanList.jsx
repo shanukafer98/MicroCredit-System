@@ -70,7 +70,7 @@ const LoanList = () => {
 
   return (
     <div>
-      <div className="grid lg:grid-cols-3 sm:grid-cols-1 gap-4 my-10 mx-2 ">
+      <div className="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 my-2 mx-2 ">
         {loans.map((loan) => (
           <motion.div
             className="bg-slate-400 shadow-2xl p-6 rounded-lg"
@@ -85,7 +85,7 @@ const LoanList = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              Loan Type: {loan.loanType === "Type1" ? "Interest Loan" : "Installment Loan"}
+              Loan Type: {loan.loanType === "Type1" ? "Interest Loan" : "Installment Loan"}     {loan.weekLoan === true ? "(Week Loan)" : ""}
             </motion.h3>
             <motion.p
               initial={{ opacity: 0 }}
@@ -122,6 +122,15 @@ const LoanList = () => {
                 transition={{ delay: 0.7 }}
               >
                 Monthly Interest: Rs. {loan.monthlyInterest.toFixed(2)}
+              </motion.p>
+            )}
+            {loan.monthlyInterest !== null && loan.monthlyInterest !== undefined &&  loan.weekLoan === true && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+              >
+                Weekly Interest: Rs. {(loan.monthlyInterest /4).toFixed(2)} 
               </motion.p>
             )}
             {loan.loanDuration && (
