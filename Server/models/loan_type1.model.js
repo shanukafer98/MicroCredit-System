@@ -38,7 +38,8 @@ const loanType1Schema = new mongoose.Schema({
     },
     latefeeInterest:{
         type:Number,
-        default:0
+        default:0,
+       
     },
     
     lateFee: {

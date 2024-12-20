@@ -13,7 +13,7 @@
 
 /* Custom styles */
 .input {
-    @apply border border-gray-300 p-2 rounded w-full;
+    @apply border border-gray-300 p-2 rounded w-1/2 flex flex-1;
   }
   
   .btn {
