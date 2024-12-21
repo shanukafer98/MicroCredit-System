@@ -31,7 +31,8 @@ const PaymentForm = ({ loanId, loanType, onPaymentSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className='bg-slate-200 p-6 rounded-lg shadow-lg w-[400px] h-[180px]'>
+    <form onSubmit={handleSubmit} className="space-y-4 ">
       <input
         name="amountPaid"
         value={payment.amountPaid}
@@ -51,6 +52,7 @@ const PaymentForm = ({ loanId, loanType, onPaymentSuccess }) => {
         Make Payment
       </button>
     </form>
+    </div>
   );
 };
 

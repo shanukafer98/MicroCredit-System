@@ -38,44 +38,48 @@ const PaymentCalculator = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4 text-green-600">Payment Calculator Results</h1>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 shadow-lg">
-          <thead className="bg-green-500 text-white">
-            <tr>
-              <th className="py-2 px-4 border-b">Payment</th>
-              <th className="py-2 px-4 border-b">Late Fee</th>
-              <th className="py-2 px-4 border-b">Total Late Fee</th>
-              {isType1 && <th className="py-2 px-4 border-b">Total Unpaid Interest</th>}
-              {isType2 && <th className="py-2 px-4 border-b">Total Unpaid Installment</th>}
-              {isType2 && <th className="py-2 px-4 border-b">Fixed Monthly Installment</th>}
-              <th className="py-2 px-4 border-b">Interest</th>
-              <th className="py-2 px-4 border-b">Principal Amount</th>
-              <th className="py-2 px-4 border-b">Total Due</th>
-              <th className="py-2 px-4 border-b">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayResults.map((result, index) => (
-              <tr key={index} className="hover:bg-green-100">
-                <td className="py-2 px-4 border-b">{result.payment}</td>
-                <td className="py-2 px-4 border-b">{result.lateFee}</td>
-                <td className="py-2 px-4 border-b">{result.total_lateFee}</td>
-                {isType1 && <td className="py-2 px-4 border-b">{result.total_unpaidInterest}</td>}
-                {isType2 && <td className="py-2 px-4 border-b">{result.total_unpaidInstallment}</td>}
-                {isType2 && <td className="py-2 px-4 border-b">{result.fixed_monthly_installment}</td>}
-                <td className="py-2 px-4 border-b">{result.interest}</td>
-                <td className="py-2 px-4 border-b">{result.principalAmount}</td>
-                <td className="py-2 px-4 border-b">{result.total_due}</td>
-                <td className="py-2 px-4 border-b">
-                  <ul className="list-disc pl-4">
-                    {result.calculation_steps.map((step, idx) => (
-                      <li key={idx}>{step}</li>
-                    ))}
-                  </ul>
-                </td>
+        {displayResults.length === 0 ? (
+          <p className="text-center text-gray-500">No results found.</p>
+        ) : (
+          <table className="min-w-full bg-white border border-gray-200 shadow-lg">
+            <thead className="bg-green-500 text-white">
+              <tr>
+                <th className="py-2 px-4 border-b">Payment</th>
+                <th className="py-2 px-4 border-b">Late Fee</th>
+                <th className="py-2 px-4 border-b">Total Late Fee</th>
+                {isType1 && <th className="py-2 px-4 border-b">Total Unpaid Interest</th>}
+                {isType2 && <th className="py-2 px-4 border-b">Total Unpaid Installment</th>}
+                {isType2 && <th className="py-2 px-4 border-b">Fixed Monthly Installment</th>}
+                <th className="py-2 px-4 border-b">Interest</th>
+                <th className="py-2 px-4 border-b">Principal Amount</th>
+                <th className="py-2 px-4 border-b">Total Due</th>
+                <th className="py-2 px-4 border-b">Details</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {displayResults.map((result, index) => (
+                <tr key={index} className="hover:bg-green-100">
+                  <td className="py-2 px-4 border-b">{result.payment}</td>
+                  <td className="py-2 px-4 border-b">{result.lateFee}</td>
+                  <td className="py-2 px-4 border-b">{result.total_lateFee}</td>
+                  {isType1 && <td className="py-2 px-4 border-b">{result.total_unpaidInterest}</td>}
+                  {isType2 && <td className="py-2 px-4 border-b">{result.total_unpaidInstallment}</td>}
+                  {isType2 && <td className="py-2 px-4 border-b">{result.fixed_monthly_installment}</td>}
+                  <td className="py-2 px-4 border-b">{result.interest}</td>
+                  <td className="py-2 px-4 border-b">{result.principalAmount}</td>
+                  <td className="py-2 px-4 border-b">{result.total_due}</td>
+                  <td className="py-2 px-4 border-b">
+                    <ul className="list-disc pl-4">
+                      {result.calculation_steps.map((step, idx) => (
+                        <li key={idx}>{step}</li>
+                      ))}
+                    </ul>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

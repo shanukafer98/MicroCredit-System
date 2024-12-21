@@ -39,7 +39,7 @@ const LoanForm = () => {
   };
 
   return (
-    <div  className="bg-slate-200 p-2 rounded-lg shadow-lg ">
+    <div  className="bg-slate-200 p-2 rounded-lg shadow-lg opacity-70">
     <motion.form
       onSubmit={handleSubmit}
       className="space-y-4"

@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import PaymentForm from "./PaymentForm";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ZAxis } from "recharts";
 
 // Set the app element for react-modal
 Modal.setAppElement('#root');
@@ -25,6 +26,10 @@ const LoanList = () => {
       bottom: 'auto',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
+      zIndex: 1000, // Set a higher z-index for the modal
+    },
+    overlay: {
+      zIndex: 999, // Ensure the overlay has a high z-index as well
     },
   };
 
@@ -73,10 +78,10 @@ const LoanList = () => {
       <div className="grid lg:grid-cols-2 sm:grid-cols-1 gap-4 my-2 mx-2 ">
         {loans.map((loan) => (
           <motion.div
-            className="bg-slate-400 shadow-2xl p-6 rounded-lg"
+            className="bg-slate-400 shadow-2xl p-4 rounded-lg  "
             key={loan._id}
             initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0.8, y: 0 }}
             transition={{ duration: 0.5 }}
             whileHover={{ scale: 1.05 }}
           >
@@ -128,7 +133,7 @@ const LoanList = () => {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
+                transition={{ delay: 0.8 }}
               >
                 Weekly Interest: Rs. {(loan.monthlyInterest /4).toFixed(2)} 
               </motion.p>
@@ -137,7 +142,7 @@ const LoanList = () => {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
+                transition={{ delay: 0.9 }}
               >
                 Loan Duration: {loan.loanDuration} months
               </motion.p>
@@ -146,7 +151,7 @@ const LoanList = () => {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
+                transition={{ delay: 1.0 }}
               >
                 Monthly Installment: Rs.{loan.monthlyInstallment.toFixed(2)}
               </motion.p>
@@ -154,22 +159,27 @@ const LoanList = () => {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.0 }}
+              transition={{ delay: 1.1 }}
             >
               Status: {loan.status}
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
+              transition={{ delay: 1.2 }}
             >
               Loan Issued Date & Time:{" "}
               {new Date(loan.createdAt).toLocaleDateString()} at{" "}
               {new Date(loan.createdAt).toLocaleTimeString()}
             </motion.p>
-            <div className="flex gap-5">
+            <motion.div
+              className="flex gap-5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.3 }}
+            >
               <motion.button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-6 my-2 rounded shadow-2xl"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 my-2 rounded shadow-2xl border-2 border-blue-700"
                 onClick={() => openModal(loan)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -178,7 +188,7 @@ const LoanList = () => {
               </motion.button>
 
               <motion.button
-                className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
+                className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl border-2 border-red-700"
                 onClick={() => handleDelete(loan.loanType, loan._id)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -186,15 +196,16 @@ const LoanList = () => {
                 Delete Loan
               </motion.button>
               <motion.button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold p-2 my-2 rounded shadow-2xl border border-green-700"
                 onClick={() => handleCalculation(loan._id, loan.loanType)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 Calculate 
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
+        
         ))}
       </div>
       {selectedLoan && (

@@ -109,6 +109,7 @@ const Clients = () => {
   };
 
   return (
+    
     <div className="container mx-auto h-[100vh]  px-15 py-10 border-4">
       <h1 className="text-2xl font-bold mb-4 text-center py-2">Loan Management System</h1>
       <div className="flex justify-between items-center mb-4 px-8">
