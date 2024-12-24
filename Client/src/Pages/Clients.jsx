@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useClientStore from "../Store/ClientStore";
+import Layout from "../components/Layout";
 
 
 
@@ -109,8 +110,8 @@ const Clients = () => {
   };
 
   return (
-    
-    <div className="container mx-auto h-[100vh]  px-15 py-10 border-4">
+    <Layout>
+    <div >
       <h1 className="text-2xl font-bold mb-4 text-center py-2">Loan Management System</h1>
       <div className="flex justify-between items-center mb-4 px-8">
         <input
@@ -305,6 +306,7 @@ const Clients = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 
