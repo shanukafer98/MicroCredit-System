@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import usePaymentStore from '../Store/paymentStore';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const PaymentHistory = ({ loanId }) => {
   const { payments, fetchPayments, deletePayment } = usePaymentStore();
@@ -26,7 +27,12 @@ const PaymentHistory = ({ loanId }) => {
         {payments.length === 0 ? (
           <p className="text-center text-gray-500">No payments found.</p>
         ) : (
-          <table className="min-w-full bg-white border border-gray-200 shadow-lg">
+          <motion.table
+            className="min-w-full bg-white border border-gray-200 shadow-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <thead className="bg-blue-500 text-white">
               <tr>
                 <th className="py-2 px-4 border-b text-center">Amount Paid</th>
@@ -36,21 +42,29 @@ const PaymentHistory = ({ loanId }) => {
             </thead>
             <tbody>
               {payments.map((payment) => (
-                <tr key={payment._id} className="hover:bg-blue-100">
+                <motion.tr
+                  key={payment._id}
+                  className="hover:bg-blue-100"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <td className="py-2 px-4 border-b text-center">Rs.{payment.amountPaid}</td>
                   <td className="py-2 px-4 border-b text-center">{new Date(payment.paymentDate).toLocaleDateString()}</td>
                   <td className="py-2 px-4 border-b text-center">
-                    <button
+                    <motion.button
                       className="bg-red-500 hover:bg-red-700 text-white font-bold p-2 my-2 rounded shadow-2xl"
                       onClick={() => handleDeletePayment(payment._id)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       Delete Payment
-                    </button>
+                    </motion.button>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
-          </table>
+          </motion.table>
         )}
       </div>
     </div>

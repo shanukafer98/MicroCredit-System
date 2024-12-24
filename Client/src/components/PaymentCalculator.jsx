@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 const url = import.meta.env.VITE_BACKEND_URL;
 
 const PaymentCalculator = () => {
@@ -41,7 +42,12 @@ const PaymentCalculator = () => {
         {displayResults.length === 0 ? (
           <p className="text-center text-gray-500">No results found.</p>
         ) : (
-          <table className="min-w-full bg-white border border-gray-200 shadow-lg">
+          <motion.table
+            className="min-w-full bg-white border border-gray-200 shadow-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <thead className="bg-green-500 text-white">
               <tr>
                 <th className="py-2 px-4 border-b">Payment</th>
@@ -58,7 +64,13 @@ const PaymentCalculator = () => {
             </thead>
             <tbody>
               {displayResults.map((result, index) => (
-                <tr key={index} className="hover:bg-green-100">
+                <motion.tr
+                  key={index}
+                  className="hover:bg-green-100"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <td className="py-2 px-4 border-b">{result.payment}</td>
                   <td className="py-2 px-4 border-b">{result.lateFee}</td>
                   <td className="py-2 px-4 border-b">{result.total_lateFee}</td>
@@ -75,10 +87,10 @@ const PaymentCalculator = () => {
                       ))}
                     </ul>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
-          </table>
+          </motion.table>
         )}
       </div>
     </div>

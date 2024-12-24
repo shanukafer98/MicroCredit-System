@@ -81,7 +81,7 @@ const LoanList = () => {
             className="bg-slate-400 shadow-2xl p-4 rounded-lg  "
             key={loan._id}
             initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 0.8, y: 0 }}
+            animate={{ opacity: 0.9, y: 0 }}
             transition={{ duration: 0.5 }}
             whileHover={{ scale: 1.05 }}
           >
